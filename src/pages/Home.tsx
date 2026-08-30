@@ -1,133 +1,341 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { CATEGORIES, faNum, fmt, IMG } from "../data";
+import { CATEGORIES, faD, faNum, fmt, IMG } from "../data";
 import { useStore } from "../store";
 import { MarqueeStrip, ProductCard } from "../chrome";
-import { IconArrowLeft, IconFlame, IconLeaf, Reveal, SectionHeading } from "../ui";
+import {
+  IconArrowLeft,
+  IconCheck,
+  IconFlame,
+  IconLeaf,
+  IconShield,
+  IconSparkle,
+  IconTruck,
+  IconUsers,
+  Reveal,
+  SectionHeading,
+} from "../ui";
+
+/* آیکون موج‌دار نارنجیِ امضای تم */
+const Squiggle = () => (
+  <svg width="30" height="20" viewBox="0 0 81 48" fill="none" className="shrink-0">
+    <path
+      d="M71.16 43C81.45 32.24 74.3 5 59.35 5C38.58 5 39.4 43 19.04 43C4.09 43 0.6 15.76 10.89 5"
+      stroke="#F59520"
+      strokeWidth="9"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+
+/* ------------------------------------------------------------------ */
+/*  اسلایدر قهرمان                                                      */
+/* ------------------------------------------------------------------ */
+
+const SLIDES = [
+  { image: IMG.hero, cat: "سیگار برگ", title: "سیگار برگ‌های کهنه‌شده", desc: "از هاوانا تا والنسیا" },
+  { image: IMG.hookah, cat: "قلیان", title: "قلیان میدنایت", desc: "شیشهٔ استانبول، کامِ نرم" },
+  { image: IMG.pipe, cat: "پیپ", title: "پیپ‌های تراشِ دست", desc: "بریارِ کالابریا" },
+];
+
+function HeroSlider() {
+  const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    const t = window.setInterval(() => setActive((a) => (a + 1) % SLIDES.length), 5000);
+    return () => window.clearInterval(t);
+  }, []);
+
+  return (
+    <div className="relative overflow-hidden rounded-3xl border border-line">
+      <div className="relative h-[340px] sm:h-[440px] lg:h-[520px]">
+        {SLIDES.map((s, i) => (
+          <div
+            key={i}
+            className={`absolute inset-0 transition-opacity duration-700 ${
+              i === active ? "opacity-100 z-10" : "opacity-0 z-0"
+            }`}
+          >
+            <img src={s.image} alt={s.title} className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-l from-ink/90 via-ink/40 to-transparent" />
+            <div className="absolute inset-y-0 start-0 w-full md:w-2/3 flex flex-col justify-center px-7 md:px-14 z-10">
+              <span className="w-fit bg-ember text-white text-[11px] font-bold px-3 py-1.5 rounded-full">
+                {s.cat}
+              </span>
+              <h2 className="font-display text-4xl md:text-6xl text-white mt-4 leading-[1.05] drop-shadow-lg">
+                {s.title}
+              </h2>
+              <p className="text-white/90 mt-3 text-sm md:text-base font-semibold">{s.desc}</p>
+              <Link to={`/shop?cat=${encodeURIComponent(s.cat)}`} className="btn-ember mt-6 w-fit">
+                دیدن محصولات <IconArrowLeft size={14} />
+              </Link>
+            </div>
+          </div>
+        ))}
+      </div>
+      {/* نقاط ناوبری */}
+      <div className="absolute bottom-5 inset-x-0 z-20 flex justify-center gap-2">
+        {SLIDES.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setActive(i)}
+            aria-label={`اسلاید ${faNum(i + 1)}`}
+            className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
+              i === active ? "w-8 bg-ember" : "w-2.5 bg-white/60 hover:bg-white"
+            }`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  شمارش معکوس                                                         */
+/* ------------------------------------------------------------------ */
+
+function useCountdown() {
+  const target = useMemo(() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 2);
+    d.setHours(23, 59, 59, 0);
+    return d.getTime();
+  }, []);
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => {
+    const t = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(t);
+  }, []);
+  const diff = Math.max(0, target - now);
+  return {
+    days: Math.floor(diff / 86_400_000),
+    hours: Math.floor((diff / 3_600_000) % 24),
+    minutes: Math.floor((diff / 60_000) % 60),
+    seconds: Math.floor((diff / 1000) % 60),
+  };
+}
+
+/* ------------------------------------------------------------------ */
+/*  صفحهٔ اصلی                                                          */
+/* ------------------------------------------------------------------ */
 
 export default function Home() {
   const { products } = useStore();
   const featured = products.filter((p) => p.featured).slice(0, 4);
-  const heroPick = featured[0] ?? products[0];
+  const offers = products.filter((p) => p.oldPrice).slice(0, 6);
+  const newest = [...products].slice(0, 8);
 
   const catCounts = CATEGORIES.map((c) => ({
     cat: c,
     count: products.filter((p) => p.category === c).length,
   }));
 
+  const countdown = useCountdown();
+
+  const features = [
+    { icon: <IconTruck size={20} />, title: "ارسال به سراسر کشور", desc: "با پست پیشتاز" },
+    { icon: <IconFlame size={20} />, title: "ارسال سریع سفارش‌ها", desc: "پس از ثبت سفارش" },
+    { icon: <IconCheck size={20} />, title: "خرید حضوری", desc: "خرید و مشاورهٔ حضوری" },
+    { icon: <IconUsers size={20} />, title: "مشاورهٔ قبل از خرید", desc: "با تماس و پشتیبانی" },
+    { icon: <IconShield size={20} />, title: "ضمانت اصالت", desc: "تضمین کیفیت و اصالت" },
+    { icon: <IconSparkle size={20} />, title: "رضایت مشتریان", desc: "رضایت حداکثری خریداران" },
+  ];
+
   return (
     <main className="relative z-10">
-      {/* ============ افتتاحیه — درِ سالن ============ */}
-      <section className="relative overflow-hidden">
-        {/* کلمهٔ شبح پس‌زمینه */}
-        <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-full max-w-7xl px-8 pointer-events-none select-none">
-          <span className="font-latin text-[17vw] leading-none text-outline-faint whitespace-nowrap opacity-50 tracking-wide">
-            EST. 2011
-          </span>
-        </div>
+      {/* ============ اسلایدر ============ */}
+      <section className="max-w-7xl mx-auto px-5 md:px-8 pt-6">
+        <Reveal>
+          <HeroSlider />
+        </Reveal>
+      </section>
 
-        <div className="max-w-7xl mx-auto px-5 md:px-8 pt-16 md:pt-20 pb-16 grid lg:grid-cols-[1.15fr_0.85fr] gap-14 items-center">
-          {/* ستون تایپوگرافی */}
+      {/* ============ معرفی + مزایا ============ */}
+      <section className="max-w-7xl mx-auto px-5 md:px-8 pt-16 grid lg:grid-cols-2 gap-12 items-center">
+        <Reveal>
           <div className="relative">
-            <p className="text-xs font-bold text-copper flex items-center gap-3">
-              <IconFlame size={14} className="text-ember animate-flicker" />
-              عرضه‌کنندهٔ دخانیات خاص
-            </p>
-            <h1 className="mt-4 font-display leading-[1.02]">
-              <span className="block text-[19vw] sm:text-8xl lg:text-[7rem] text-outline animate-rise">
-                اسموک
-              </span>
-              <span className="block text-[19vw] sm:text-8xl lg:text-[7rem] text-cream animate-rise" style={{ animationDelay: "120ms" }}>
-                سیتی<span className="text-ember">.</span>
-              </span>
+            <h1 className="font-display text-4xl md:text-6xl leading-[1.1] text-cream">
+              <span className="ns-gradienttitle">اسموک سیتی </span>
+              برترین فروشگاه
+              <br />
+              دخانیات خاص و لوازم جانبی
             </h1>
-            <p className="mt-6 max-w-md text-fog leading-relaxed text-[15px] animate-rise" style={{ animationDelay: "220ms" }}>
-              سردابه‌ای از چیزهای آرام‌سوز: برگ کوبایی، بریار کالابریا، شیشهٔ استانبول. همه‌چیز زیر
-              سقف خودمان کهنه می‌شود، با دست بسته‌بندی می‌شود و با همان کنترلِ سن و سالی که
-              حقش است، به درِ خانه‌تان می‌رسد.
-            </p>
-
-            <div className="mt-8 flex flex-wrap items-center gap-4 animate-rise" style={{ animationDelay: "300ms" }}>
-              <Link to="/shop" className="btn-ember">
-                ورود به فروشگاه <IconArrowLeft size={14} />
-              </Link>
-              <Link to="/about" className="btn-ghost">
-                هنرِ دود
-              </Link>
-            </div>
-
-            <dl className="mt-12 grid grid-cols-3 max-w-md border-t border-line pt-6 gap-4 animate-rise" style={{ animationDelay: "380ms" }}>
+            <ul className="mt-8 space-y-4">
               {[
-                [faNum(14), "سال کهنه‌سازی"],
-                [faNum(31), "کشور مبدأ"],
-                ["۶۹٪", "رطوبت هیومیدار"],
-              ].map(([n, l]) => (
-                <div key={l}>
-                  <dt className="font-display text-4xl text-ember leading-none">{n}</dt>
-                  <dd className="text-[11px] font-semibold text-ash mt-1.5">{l}</dd>
-                </div>
+                "امکان خرید حضوری و مشاورهٔ تخصصی",
+                "ارسال سریع به تمام نقاط ایران",
+                "با ضمانت اصالت و بهترین کیفیت",
+              ].map((f) => (
+                <li key={f} className="flex items-center gap-3.5">
+                  <Squiggle />
+                  <span className="text-parch font-semibold text-[15px]">{f}</span>
+                </li>
               ))}
-            </dl>
+            </ul>
+            <div className="mt-9 flex flex-wrap gap-3.5">
+              <Link to="/shop?sale=1" className="btn-ember">
+                <IconSparkle size={16} /> تخفیفات ویژه
+              </Link>
+              <Link to="/shop" className="btn-ghost">
+                جدیدترین محصولات
+              </Link>
+            </div>
+          </div>
+        </Reveal>
 
-            {/* برچسب عمودی کناری */}
-            <span className="hidden lg:block absolute -right-24 top-10 font-latin text-[10px] tracking-[0.4em] text-ash rotate-180 [writing-mode:vertical-rl]">
-              TEHRAN · VALIASR ST — NO. 14
+        <Reveal delay={120}>
+          <div className="relative">
+            <span className="absolute -top-6 -start-4 text-ember animate-spin-slow z-10">
+              <IconSparkle size={42} strokeWidth={1.4} />
             </span>
-          </div>
-
-          {/* قاب قوسی تصویر */}
-          <div className="relative animate-rise" style={{ animationDelay: "200ms" }}>
-            <div className="absolute -inset-6 arch-frame border border-line2/50 pointer-events-none" />
-            <div className="relative arch-frame overflow-hidden border border-line2 shadow-[0_40px_90px_-30px_rgba(0,0,0,0.9)]">
+            <div className="rounded-3xl overflow-hidden border border-line shadow-[0_30px_70px_-30px_rgba(35,39,47,0.35)]">
               <img
-                src={IMG.hero}
-                alt="سیگار برگ‌های ممتاز در جعبهٔ سدر با دودی که بلند می‌شود"
-                className="w-full h-[420px] sm:h-[520px] lg:h-[560px] object-cover"
+                src={IMG.humidor}
+                alt="هیومیدار سدر با سیگار برگ"
+                className="w-full h-[380px] md:h-[460px] object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-transparent" />
-              {heroPick && (
-                <Link
-                  to={`/product/${heroPick.id}`}
-                  className="absolute bottom-5 left-5 right-5 flex items-center gap-4 border border-line2 bg-ink/80 backdrop-blur-md rounded-sm p-3.5 group hover:border-ember transition-colors"
-                >
-                  <img src={heroPick.image} alt="" className="h-14 w-14 object-cover rounded-sm border border-line" />
-                  <span className="flex-1">
-                    <span className="block text-[9px] font-bold text-copper">پیشنهاد این ماه</span>
-                    <span className="block font-display text-xl text-cream group-hover:text-ember2 transition-colors leading-tight">
-                      {heroPick.name}
-                    </span>
-                  </span>
-                  <span className="text-sm font-bold text-ember2">{fmt(heroPick.price)}</span>
-                  <span className="text-fog group-hover:text-ember group-hover:-translate-x-1 transition-all">
-                    <IconArrowLeft size={18} />
-                  </span>
-                </Link>
-              )}
             </div>
-            {/* برچسب شناور */}
-            <div className="absolute -top-4 -left-3 bg-ember text-[#211507] text-[10px] font-bold px-3 py-2 rounded-sm -rotate-3 shadow-[0_14px_34px_-10px_rgba(232,163,74,0.6)]">
-              کهنه‌سازی در محل
+            <div className="absolute -bottom-6 -end-3 md:-end-6 soft-card p-4 w-52 shadow-[0_20px_50px_-16px_rgba(35,39,47,0.3)]">
+              <p className="font-display text-3xl text-ember leading-none">
+                {faNum(26)}<span className="text-lg"> سال</span>
+              </p>
+              <p className="text-[11px] font-bold text-ash mt-1.5 leading-relaxed">
+                کهنه‌ترین بریارِ کارگاه ما
+              </p>
             </div>
           </div>
+        </Reveal>
+      </section>
+
+      {/* ============ چرا اسموک سیتی؟ ============ */}
+      <section className="max-w-7xl mx-auto px-5 md:px-8 pt-24">
+        <Reveal>
+          <div className="text-center max-w-2xl mx-auto">
+            <h2 className="font-display text-4xl md:text-5xl text-cream leading-[1.05]">
+              چرا <span className="ns-gradienttitle">اسموک سیتی؟</span>
+            </h2>
+            <p className="text-fog mt-4 text-sm md:text-[15px] leading-relaxed font-semibold">
+              ما در اسموک سیتی با ارائهٔ محصولات اصل و پشتیبانی مطمئن، تجربهٔ خریدی متفاوت و
+              رضایت‌بخش را برای شما فراهم می‌کنیم.
+            </p>
+          </div>
+        </Reveal>
+        <div className="mt-12 grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+          {features.map((f, i) => (
+            <Reveal key={f.title} delay={i * 70}>
+              <div className="soft-card p-6 text-center transition-all duration-300 hover:-translate-y-1.5 hover:border-ember/50 hover:shadow-[0_20px_44px_-20px_rgba(245,149,32,0.35)] group">
+                <span className="inline-grid place-items-center h-14 w-14 rounded-full bg-ember/10 text-ember border border-ember/25 group-hover:bg-ember group-hover:text-white transition-colors duration-300">
+                  {f.icon}
+                </span>
+                <h3 className="font-bold text-cream mt-4 text-[15px]">{f.title}</h3>
+                <p className="text-xs text-fog mt-1.5 font-semibold">{f.desc}</p>
+              </div>
+            </Reveal>
+          ))}
         </div>
       </section>
 
       <MarqueeStrip />
 
-      {/* ============ علاقه‌مندی‌های خانه ============ */}
+      {/* ============ بنرهای دسته‌بندی ============ */}
+      <section className="max-w-7xl mx-auto px-5 md:px-8 pt-14">
+        <Reveal>
+          <SectionHeading kicker="دپارتمان‌ها" title="دسته‌بندی محصولات" />
+        </Reveal>
+        <div className="mt-9 grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-5">
+          {catCounts.map(({ cat, count }, i) => {
+            const img = products.find((p) => p.category === cat)?.image ?? IMG.hero;
+            return (
+              <Reveal key={cat} delay={i * 60}>
+                <Link
+                  to={`/shop?cat=${encodeURIComponent(cat)}`}
+                  className="group relative block rounded-2xl overflow-hidden border border-line h-44 md:h-56"
+                >
+                  <img src={img} alt={cat} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-cream/85 via-cream/25 to-transparent" />
+                  <div className="absolute bottom-0 inset-x-0 p-4">
+                    <p className="font-display text-xl md:text-2xl text-white leading-tight drop-shadow">{cat}</p>
+                    <p className="text-white/85 text-[11px] font-bold mt-0.5">{faNum(count)} محصول</p>
+                  </div>
+                  <span className="absolute top-3 start-3 h-9 w-9 grid place-items-center rounded-full bg-white/90 text-ember opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <IconArrowLeft size={16} />
+                  </span>
+                </Link>
+              </Reveal>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* ============ پیشنهادات شگفت‌انگیز + شمارش معکوس ============ */}
+      <section className="max-w-7xl mx-auto px-5 md:px-8 pt-20">
+        <Reveal>
+          <div className="soft-card overflow-hidden">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-gradient-to-l from-ember/15 via-transparent to-transparent px-6 md:px-9 py-7 border-b border-line">
+              <div className="flex items-center gap-4">
+                <span className="h-12 w-12 grid place-items-center rounded-2xl bg-ember text-white shrink-0">
+                  <IconSparkle size={24} />
+                </span>
+                <div>
+                  <h2 className="font-display text-3xl md:text-4xl text-cream leading-[1.05]">
+                    <span className="ns-gradienttitle">پیشنهادات </span>شگفت‌انگیز
+                  </h2>
+                  <p className="text-fog text-xs font-bold mt-1">تخفیف‌های محدود — تا تمام شدن موجودی</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2.5" dir="ltr">
+                {[
+                  { v: countdown.days, l: "روز" },
+                  { v: countdown.hours, l: "ساعت" },
+                  { v: countdown.minutes, l: "دقیقه" },
+                  { v: countdown.seconds, l: "ثانیه" },
+                ].map((t) => (
+                  <div key={t.l} className="text-center bg-cream text-white rounded-xl px-3.5 py-2 min-w-[64px]">
+                    <p className="font-display text-2xl leading-none">{faD(String(t.v).padStart(2, "0"))}</p>
+                    <p className="text-[10px] font-bold opacity-80 mt-1">{t.l}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="p-6 md:p-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {offers.map((p, i) => (
+                <Reveal key={p.id} delay={i * 80}>
+                  <ProductCard product={p} index={i} />
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </Reveal>
+      </section>
+
+      {/* ============ جدیدترین محصولات ============ */}
       <section className="max-w-7xl mx-auto px-5 md:px-8 pt-20">
         <Reveal>
           <SectionHeading
-            kicker="از سردابه"
-            title="علاقه‌مندی‌های خانه"
+            kicker="تازه‌های سردابه"
+            title="جدیدترین محصولات"
             right={
               <Link to="/shop" className="btn-ghost mb-1">
-                دیدن همهٔ {faNum(products.length)} قلم <IconArrowLeft size={14} />
+                دیدن همه <IconArrowLeft size={14} />
               </Link>
             }
           />
         </Reveal>
-        <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="mt-9 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
+          {newest.map((p, i) => (
+            <Reveal key={p.id} delay={(i % 4) * 70}>
+              <ProductCard product={p} index={i} />
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
+      {/* ============ علاقه‌مندی‌های خانه ============ */}
+      <section className="max-w-7xl mx-auto px-5 md:px-8 pt-20">
+        <Reveal>
+          <SectionHeading kicker="از سردابه" title="علاقه‌مندی‌های خانه" />
+        </Reveal>
+        <div className="mt-9 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
           {featured.map((p, i) => (
             <Reveal key={p.id} delay={i * 90}>
               <ProductCard product={p} index={i} />
@@ -136,118 +344,21 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ============ ایندکس دسته‌ها ============ */}
-      <section className="max-w-7xl mx-auto px-5 md:px-8 pt-24">
-        <Reveal>
-          <SectionHeading kicker="دودِ خودت را پیدا کن" title="دپارتمان‌ها" />
-        </Reveal>
-        <ul className="mt-10 border-t border-line">
-          {catCounts.map(({ cat, count }, i) => (
-            <Reveal as="li" key={cat} delay={i * 60}>
-              <Link
-                to={`/shop?cat=${encodeURIComponent(cat)}`}
-                className="group flex items-center justify-between gap-6 py-6 border-b border-line transition-all duration-300 hover:bg-panel/70 hover:px-5"
-              >
-                <div className="flex items-center gap-6 min-w-0">
-                  <span className="font-latin text-xs text-copper w-8 shrink-0">0{i + 1}</span>
-                  <span className="font-display text-4xl md:text-6xl text-fog group-hover:text-ember transition-colors truncate leading-[1.1]">
-                    {cat}
-                  </span>
-                </div>
-                <div className="flex items-center gap-5 shrink-0">
-                  <span className="text-[11px] font-semibold text-ash">
-                    {faNum(count)} قلم
-                  </span>
-                  <span className="h-11 w-11 grid place-items-center rounded-full border border-line2 text-fog group-hover:border-ember group-hover:text-ember group-hover:rotate-[45deg] transition-all duration-300">
-                    <IconArrowLeft size={17} />
-                  </span>
-                </div>
-              </Link>
-            </Reveal>
-          ))}
-        </ul>
-      </section>
-
-      {/* ============ هنرِ ما ============ */}
-      <section className="max-w-7xl mx-auto px-5 md:px-8 pt-24 grid lg:grid-cols-2 gap-12 items-center">
-        <Reveal className="order-2 lg:order-1">
-          <div className="relative">
-            <div className="arch-frame overflow-hidden border border-line">
-              <img
-                src={IMG.humidor}
-                alt="هیومیدار صندوقچهٔ سدر پر از سیگار برگ"
-                className="w-full h-[420px] md:h-[500px] object-cover transition-transform duration-700 hover:scale-105"
-              />
-            </div>
-            <div className="absolute -bottom-5 -left-3 md:-left-6 border border-line bg-coal/95 backdrop-blur-sm rounded-sm p-4 w-52 shadow-[0_20px_50px_-16px_rgba(0,0,0,0.8)]">
-              <p className="font-display text-3xl text-ember leading-none">{faNum(26)}<span className="text-xl"> سال</span></p>
-              <p className="text-[10px] font-semibold text-ash mt-1.5 leading-relaxed">
-                سنِ قدیمی‌ترین بلانکِ بریار کارگاه
-              </p>
-            </div>
-          </div>
-        </Reveal>
-        <div className="order-1 lg:order-2">
-          <Reveal>
-            <SectionHeading kicker="چرا اسموک سیتی" title="همه‌چیز زیر سقف خودمان کهنه می‌شود" />
-          </Reveal>
-          <Reveal delay={100}>
-            <p className="mt-6 text-fog leading-relaxed max-w-lg text-[15px]">
-              بیشتر فروشگاه‌ها همان را می‌فروشند که پخش‌کننده می‌فرستد. ما برگِ سبز و بریارِ خام
-              می‌خریم، بعد ماه‌ها — گاهی سال‌ها — وقت می‌گذاریم تا ارزش فندکِ شما را داشته باشد.
-              دما، رطوبت و صبر کارشان را می‌کنند؛ ما فقط دفترش را نگه می‌داریم.
-            </p>
-          </Reveal>
-          <ul className="mt-8 space-y-5 max-w-lg">
-            {[
-              {
-                icon: <IconLeaf size={18} />,
-                title: "تک‌خاستگاه، تک‌مزرعه",
-                body: "هر محمولهٔ توتون تا مزرعه‌ای که دریده شده قابل ردیابی است. بپرسید تا بارنامه‌اش را نشانتان بدهیم.",
-              },
-              {
-                icon: <IconFlame size={18} />,
-                title: "هر سری، با دست روشن می‌شود",
-                body: "سرپرست سردابهٔ ما هر محمولهٔ تازه را قبل از راه‌یافتن به قفسه تست می‌کند. از هر ۶ محموله تقریباً یکی رد می‌شود.",
-              },
-              {
-                icon: <IconArrowLeft size={18} />,
-                title: "همان روزِ سفارش، ارسال",
-                body: "سفارش‌ها قبل از ساعت ۱۶ همان روز راه می‌افتند؛ در جعبه‌های روکش‌سدر با بستهٔ رطوبت دوطرفه.",
-              },
-            ].map((f, i) => (
-              <Reveal as="li" key={f.title} delay={i * 90} className="flex gap-4 border border-line bg-panel/60 rounded-sm p-5 hover:border-line2 transition-colors">
-                <span className="h-11 w-11 shrink-0 grid place-items-center rounded-sm bg-ember/10 border border-ember/30 text-ember">
-                  {f.icon}
-                </span>
-                <span>
-                  <span className="block font-display text-xl text-cream">{f.title}</span>
-                  <span className="block text-sm text-fog mt-1 leading-relaxed">{f.body}</span>
-                </span>
-              </Reveal>
-            ))}
-          </ul>
-        </div>
-      </section>
-
       {/* ============ خبرنامه ============ */}
       <section className="max-w-7xl mx-auto px-5 md:px-8 pt-24">
         <Reveal>
-          <div className="relative overflow-hidden border border-line bg-panel/70 rounded-sm px-6 md:px-12 py-12 grid md:grid-cols-[1.2fr_1fr] gap-8 items-center">
+          <div className="relative overflow-hidden rounded-3xl bg-cream text-white px-6 md:px-12 py-12 grid md:grid-cols-[1.2fr_1fr] gap-8 items-center">
             <div
-              className="absolute inset-0 opacity-40 pointer-events-none"
-              style={{
-                background: "radial-gradient(60% 120% at 10% 0%, rgba(232,163,74,0.16), transparent 60%)",
-              }}
+              className="absolute inset-0 opacity-30 pointer-events-none"
+              style={{ background: "radial-gradient(60% 120% at 90% 0%, rgba(245,149,32,0.7), transparent 60%)" }}
             />
             <div className="relative">
-              <p className="text-xs font-bold text-copper">نامهٔ اِمبِر</p>
-              <h2 className="font-display text-4xl md:text-5xl text-cream mt-3 leading-[1.1]">
-                تازه‌ها اول سر از صندوق شما درمی‌آورند
+              <p className="text-xs font-bold text-ember">نامهٔ اِمبِر</p>
+              <h2 className="font-display text-3xl md:text-4xl text-white mt-3 leading-[1.1]">
+                تازه‌ها اول به صندوق شما می‌رسند
               </h2>
-              <p className="text-sm text-fog mt-3 max-w-md leading-relaxed">
-                ماهی یک نامه: سردابه چه چیزهایی تازه گرفته، چه چیزهایی رو به اتمام است، و یک
-                جفت‌و‌جور که ارزش یک عصر را دارد. بدون سروصدا.
+              <p className="text-sm text-white/75 mt-3 max-w-md leading-relaxed font-semibold">
+                ماهی یک نامه: آنچه سردابه تازه گرفته، آنچه رو به اتمام است و یک پیشنهاد ویژه. بدون اسپم.
               </p>
             </div>
             <NewsletterForm />
@@ -267,7 +378,7 @@ function NewsletterForm() {
       onSubmit={(e) => {
         e.preventDefault();
         if (!/^\S+@\S+\.\S+$/.test(email)) {
-          toast("این ایمیل درست به نظر نمی‌رسد", "warn");
+          toast("این ایمیل درست به‌نظر نمی‌رسد", "warn");
           return;
         }
         setEmail("");
@@ -280,8 +391,8 @@ function NewsletterForm() {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="you@postbox.com"
-        className="field flex-1"
         dir="ltr"
+        className="field flex-1 !bg-white/10 !border-white/25 !text-white placeholder:!text-white/50 focus:!bg-white/15"
       />
       <button className="btn-ember shrink-0" type="submit">
         عضویت

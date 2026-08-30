@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { CATEGORIES, faNum } from "../data";
+import { CATEGORIES, faNum, fmt, FREE_SHIPPING } from "../data";
 import { useStore } from "../store";
 import { ProductCard } from "../chrome";
 import { IconFlame, IconSearch, IconX, Reveal } from "../ui";
@@ -18,10 +18,12 @@ export default function Shop() {
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<SortKey>("featured");
   const [inStockOnly, setInStockOnly] = useState(false);
+  const [saleOnly, setSaleOnly] = useState(() => params.get("sale") === "1");
 
   useEffect(() => {
     const c = params.get("cat");
     if (c && (CATEGORIES.includes(c as never) || c === "همه")) setCat(c);
+    setSaleOnly(params.get("sale") === "1");
   }, [params]);
 
   const changeCat = (c: string) => {
@@ -34,6 +36,7 @@ export default function Shop() {
     let list = [...products];
     if (cat !== "همه") list = list.filter((p) => p.category === cat);
     if (inStockOnly) list = list.filter((p) => p.stock > 0);
+    if (saleOnly) list = list.filter((p) => p.oldPrice && p.oldPrice > p.price);
     const q = query.trim().toLowerCase();
     if (q)
       list = list.filter(
@@ -60,7 +63,7 @@ export default function Shop() {
         list.sort((a, b) => Number(b.featured ?? false) - Number(a.featured ?? false));
     }
     return list;
-  }, [products, cat, query, sort, inStockOnly]);
+  }, [products, cat, query, sort, inStockOnly, saleOnly]);
 
   return (
     <main className="relative z-10 max-w-7xl mx-auto px-5 md:px-8 pt-14">
@@ -97,7 +100,7 @@ export default function Shop() {
               onClick={() => changeCat(c)}
               className={`px-3.5 py-2 rounded-sm text-xs font-bold border transition-all duration-200 cursor-pointer ${
                 cat === c
-                  ? "bg-ember text-[#211507] border-ember"
+                  ? "bg-ember text-white border-ember shadow-[0_6px_16px_-6px_rgba(245,149,32,0.6)]"
                   : "border-line2 text-fog hover:border-ember hover:text-ember"
               }`}
             >
@@ -156,6 +159,18 @@ export default function Shop() {
           />
           فقط موجود
         </button>
+
+        <button
+          onClick={() => setSaleOnly((v) => !v)}
+          className={`flex items-center gap-2 px-3.5 py-2 rounded-sm border text-xs font-bold transition-all cursor-pointer ${
+            saleOnly
+              ? "border-ember text-white bg-ember"
+              : "border-line2 text-fog hover:border-ember hover:text-ember"
+          }`}
+        >
+          <span className={`h-2 w-2 rounded-full transition-colors ${saleOnly ? "bg-white" : "bg-ember"}`} />
+          فقط تخفیف‌دار
+        </button>
       </div>
 
       {/* شبکهٔ محصولات */}
@@ -173,6 +188,7 @@ export default function Shop() {
             onClick={() => {
               setQuery("");
               setInStockOnly(false);
+              setSaleOnly(false);
               changeCat("همه");
             }}
           >
@@ -190,7 +206,7 @@ export default function Shop() {
       )}
 
       <p className="mt-12 text-center text-[11px] font-semibold text-ash">
-        ارسال رایگان برای سفارش‌های بالای ۱۵۰ دلار · کنترل مدرک هنگام تحویل · فقط ۱۸+
+        ارسال رایگان برای سفارش‌های بالای {fmt(FREE_SHIPPING)} · کنترل مدرک هنگام تحویل · فقط ۱۸+
       </p>
     </main>
   );
