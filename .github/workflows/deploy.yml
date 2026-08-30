@@ -27,10 +27,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
 
+      # npm install به‌جای npm ci — حتی اگر package-lock.json در ریپازیتوری
+      # کامیت نشده باشد هم بدون خطا نصب می‌کند
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       # --base=./ مهم‌ترین خط است: مسیر فایل‌ها نسبی می‌شود
       # تا سایت زیردامنهٔ github.io/repo-name هم درست بالا بیاید
