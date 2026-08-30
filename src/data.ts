@@ -1,11 +1,11 @@
 /* ------------------------------------------------------------------ */
-/*  اسموک سیتی — مدل داده و محتوای اولیه                                 */
+/*  اسموک سیتی — مدل داده و محتوای اولیه                                  */
 /* ------------------------------------------------------------------ */
 
 export type Category =
   | "سیگار برگ"
-  | "توتون پیپ"
-  | "پیپ و ابزار"
+  | "تنباکوی پیپ"
+  | "پیپ"
   | "قلیان"
   | "پیچ و کاغذ"
   | "لوازم جانبی";
@@ -53,8 +53,8 @@ export interface Order {
 
 export const CATEGORIES: Category[] = [
   "سیگار برگ",
-  "توتون پیپ",
-  "پیپ و ابزار",
+  "تنباکوی پیپ",
+  "پیپ",
   "قلیان",
   "پیچ و کاغذ",
   "لوازم جانبی",
@@ -80,7 +80,11 @@ export const faD = (v: string | number) =>
 export const faNum = (n: number) => faD(n.toLocaleString("en-US"));
 
 export const fmt = (n: number) =>
-  faD(n.toLocaleString("en-US", { maximumFractionDigits: 2 })) + " دلار";
+  faD(Math.round(n).toLocaleString("en-US")) + " تومان";
+
+/* ارسال رایگان و هزینهٔ پست */
+export const FREE_SHIPPING = 5_000_000;
+export const SHIPPING_FEE = 150_000;
 
 export const fmtDate = (iso: string) =>
   new Date(iso).toLocaleDateString("fa-IR", { day: "numeric", month: "long", year: "numeric" });
@@ -109,8 +113,8 @@ export const IMG = {
 };
 
 export const IMAGE_LIBRARY: { label: string; url: string }[] = [
-  { label: "جعبه سیگار برگ", url: IMG.cigars },
-  { label: "بسته توتون", url: IMG.tobacco },
+  { label: "جعبهٔ سیگار برگ", url: IMG.cigars },
+  { label: "بستهٔ تنباکو", url: IMG.tobacco },
   { label: "پیپ بریار", url: IMG.pipe },
   { label: "فندک برنجی", url: IMG.lighter },
   { label: "قلیان", url: IMG.hookah },
@@ -124,14 +128,14 @@ export const SEED_PRODUCTS: Product[] = [
     id: "p-habana",
     name: "هوانا رزروا شمارهٔ ۵",
     category: "سیگار برگ",
-    price: 148,
+    price: 2_850_000,
     stock: 14,
     sku: "SC-CIG-005",
     origin: "هاوانا، کوبا",
     rating: 4.9,
     reviews: 212,
     description:
-      "بیست‌وپنج ماه در چوب سدر کهنه شده؛ پیچی با روکش برگ کوروبوی اکوادور که نرم مثل ابریشم است. افتخار سردابهٔ ما — آرام‌سوز، بی‌نقص و با خاکستری سرد و یکدستی که حاضر نیست بریزد.",
+      "بیست‌وپنج ماه کهنه‌شده در سدر و پیچیده در برگ کوروجوی اکوادوری. جواهرِ تاجِ سردابهٔ ما — آرام‌سوز، خوش‌رایحه و با خاکستریِ سردِ یکدست.",
     notes: ["سدر", "کاکائوی تلخ", "اسپرسو", "فلفل سفید"],
     image: IMG.cigars,
     featured: true,
@@ -140,49 +144,49 @@ export const SEED_PRODUCTS: Product[] = [
   {
     id: "p-golden",
     name: "بلندِ ساعت طلایی — ۵۰ گرم",
-    category: "توتون پیپ",
-    price: 24.5,
-    oldPrice: 29,
+    category: "تنباکوی پیپ",
+    price: 480_000,
+    oldPrice: 560_000,
     stock: 42,
     sku: "SC-TOB-012",
     origin: "کپنهاگ، دانمارک",
     rating: 4.7,
     reviews: 158,
     description:
-      "پایهٔ ویرجینیای روشن با کمی پریک که مزه را از یکنواختی درمی‌آورد. همان هفتهٔ رسیدن، فشرده، ورق و قوطی می‌شود. راحت فشرده می‌شود، خشک می‌سوزد و بوی پاییز را به خانه می‌آورد.",
-    notes: ["عسل", "کاه", "میوه‌های هسته‌دار", "انجیر"],
+      "پایهٔ ویرجینیای روشن با کمی پریک که همه‌چیز را جذاب می‌کند. فشرده، برش‌خورده و در همان هفتهٔ ورود قوطی‌شده. راحت جمع می‌شود و خشک می‌سوزد.",
+    notes: ["عسل", "کاه", "میوهٔ هسته‌دار", "انجیر"],
     image: IMG.tobacco,
-    badge: "تولید محدود",
+    badge: "دست‌ساز",
   },
   {
     id: "p-briar",
     name: "پیپ بریروود میراثی",
-    category: "پیپ و ابزار",
-    price: 189,
+    category: "پیپ",
+    price: 3_600_000,
     stock: 7,
     sku: "SC-PIP-031",
     origin: "پزارو، ایتالیا",
     rating: 4.8,
     reviews: 96,
     description:
-      "از بریار ۲۸ سالهٔ کالابریا، تراشِ دست با رگه‌های شعله‌ای که از عکس‌هایش هم زیباتر می‌سوزد. دهانهٔ اکریلیک کهرباییِ دست‌ساز و مجرای هوای باریک و نرم دارد.",
-    notes: ["رگهٔ شعله‌ای", "دهانهٔ کهربایی", "فیلتر ۹ میلی‌متری", "تراش دستی"],
+      "تراشِ دست از بریارِ ۲۸سالهٔ کالابریا با رگه‌های شعله‌ای که عکسش از خودش هم خوش‌دست‌تر است. مجهز به ساقِ آکریلیک کهربایی و مجرای هوای باریک.",
+    notes: ["رگهٔ شعله‌ای", "ساق کهربایی", "فیلتر ۹ میلی‌متر", "دست‌ساز"],
     image: IMG.pipe,
-    badge: "ساخت دست",
+    badge: "تراش دست",
   },
   {
     id: "p-ember",
     name: "فندک برنجی اِمبِر",
     category: "لوازم جانبی",
-    price: 59,
+    price: 1_150_000,
     stock: 23,
     sku: "SC-ACC-077",
     origin: "بیرمنگام، انگلستان",
     rating: 4.6,
     reviews: 301,
     description:
-      "برنج یکپارچهٔ ماشین‌کاری‌شده با شعلهٔ ملایمی که برای روشن‌کردن با تراشهٔ سدر تنظیم شده، نه مشعل بوتان. ظرف یک ماه پتینهٔ اصیل خودش را پیدا می‌کند. گارانتی مادام‌العمر — خراب شد، تعمیر یا تعویض؛ بدون فاکتور.",
-    notes: ["برنج یکپارچه", "شعلهٔ ملایم", "گارانتی مادام‌العمر", "درپوش ضدباد"],
+      "برنجِ یکپارچهٔ ماشین‌کاری‌شده با شعلهٔ ملایمِ تنظیم‌شده برای سیگار برگ. ظرف یک ماه پاتینهٔ اصیل می‌گیرد. ضمانت مادام‌العمر — اگر خراب شد، رایگان تعمیر یا تعویض می‌کنیم.",
+    notes: ["برنج یکپارچه", "شعلهٔ ملایم", "ضمانت مادام‌العمر", "درپوش ضدباد"],
     image: IMG.lighter,
     featured: true,
   },
@@ -190,47 +194,47 @@ export const SEED_PRODUCTS: Product[] = [
     id: "p-midnight",
     name: "قلیان میدنایت",
     category: "قلیان",
-    price: 229,
+    price: 4_400_000,
     stock: 5,
     sku: "SC-HKA-009",
     origin: "استانبول، ترکیه",
     rating: 4.9,
     reviews: 74,
     description:
-      "مخزن شیشهٔ بوروسیلیکات مشکی، ساقهٔ برنجی و کامی آن‌قدر نرم که انگار از قلیانی دو برابر این قیمت قرض گرفته‌اید. با دو شلنگ، سری سرامیکی و زغال نارگیل کافی برای یک هفته ارسال می‌شود.",
-    notes: ["شیشهٔ بوروسیلیکات", "ساقهٔ برنجی", "دو شلنگ", "سری سرامیکی"],
+      "شیشهٔ بوروسیلیکات مشکی، بدنهٔ برنجی و کامی آن‌قدر نرم که انگار از دستگاهی گران‌تر امانت گرفته‌اید. با دو شیلنگ، کاسهٔ سفالی و زغال نارگیل ارسال می‌شود.",
+    notes: ["شیشهٔ بوروسیلیکات", "بدنهٔ برنجی", "دو شیلنگ", "کاسهٔ سفالی"],
     image: IMG.hookah,
     featured: true,
-    badge: "تعداد محدود",
+    badge: "محدود",
   },
   {
     id: "p-rolling",
     name: "ست پیچ کلاسیک",
     category: "پیچ و کاغذ",
-    price: 19,
+    price: 380_000,
     stock: 60,
     sku: "SC-ROL-044",
     origin: "پریگو، فرانسه",
     rating: 4.5,
     reviews: 428,
     description:
-      "هرچه آیین پیچیدن لازم دارد: دو دفترچه کاغذ کنفی بدون سفیدکننده، فیلتر دهانه، غلتک برنجی‌ای که هرگز گیر نمی‌کند و قوطی مگنتی‌ای که حتی در کتابخانه هم سر و صدا نمی‌کند. بدون رنگ، بدون طعم، بدون حاشیه.",
-    notes: ["کنف بدون سفیدکننده", "غلتک برنجی", "قوطی مگنتی", "فیلتر دهانه"],
+      "هرآنچه یک آیین نیاز دارد: دو دفتر کاغذ کتانفی سفیدنشده، فیلتر، رولر برنجی که هرگز گیر نمی‌کند و قوطی مگنتی. بدون رنگ، بدون طعم، بدون زوائد.",
+    notes: ["کتانف سفیدنشده", "رولر برنجی", "قوطی مگنتی", "فیلتر"],
     image: IMG.rolling,
   },
   {
     id: "p-vault",
     name: "هیومیدار صندوقچهٔ سدر",
     category: "لوازم جانبی",
-    price: 129,
+    price: 2_500_000,
     stock: 9,
     sku: "SC-ACC-019",
     origin: "والنسیا، اسپانیا",
     rating: 4.8,
     reviews: 133,
     description:
-      "به‌لطف روکش سدر اسپانیایی و رطوبت‌سنج مغناطیسیِ قابل‌اعتماد، چهل برگ را در رطوبت تنبلِ ۶۹٪ نگه می‌دارد. لولای پیانویی‌اش مثل گاوصندوق بسته می‌شود — چون دقیقاً برای همین ساخته شده.",
-    notes: ["سدر اسپانیایی", "ظرفیت ۴۰ برگ", "رطوبت‌سنج مغناطیسی", "لولای پیانویی"],
+      "چهل سیگار برگ را در رطوبتِ ۶۹٪ نگه می‌دارد؛ با روکش سدر اسپانیایی و هیدرومتر شیشه‌ای مگنتی که واقعاً قابل‌اعتماد است. لولای آن مثل گاوصندوق بسته می‌شود.",
+    notes: ["سدر اسپانیایی", "ظرفیت ۴۰ سیگار", "هیدرومتر مگنتی", "لولای محکم"],
     image: IMG.humidor,
     featured: true,
   },
@@ -238,16 +242,16 @@ export const SEED_PRODUCTS: Product[] = [
     id: "p-sterling",
     name: "ست کاتر استرلینگ",
     category: "لوازم جانبی",
-    price: 49,
-    oldPrice: 64,
+    price: 950_000,
+    oldPrice: 1_250_000,
     stock: 3,
     sku: "SC-ACC-092",
     origin: "زولینگن، آلمان",
     rating: 4.7,
     reviews: 88,
     description:
-      "کاتر گیوتین دوبل و پانچ از استیل ضدزنگ که در زولینگن چنان تیز شده رینگ ۵۴ را تمیز می‌بُرد و صدایش شنیده می‌شود. در جعبهٔ کشویی گردویی عرضه می‌شود. فقط سه ست مانده — تمام شود، تمام است.",
-    notes: ["گیوتین دوبل", "پانچ کلاهکی", "جعبهٔ گردویی", "رینگ ۵۴"],
+      "کاتر دوگیوتین و پانچ از استیل ضدزنگ، تیزشده در زولینگن تا رینگِ ۵۴ را چنان تمیز ببرد که صدایش را بشنوید. در جعبهٔ گردویی. فقط ۳ ست مانده.",
+    notes: ["دوگیوتین", "پانچ", "جعبهٔ گردویی", "رینگ ۵۴"],
     image: IMG.cutter,
     badge: "آخرین فرصت",
   },
@@ -263,45 +267,46 @@ const daysAgo = (n: number) => {
 export const SEED_ORDERS: Order[] = [
   {
     id: "SC-90412",
-    customer: "کاوه حیدری",
-    email: "k.heydari@postbox.ir",
-    address: "تهران، خیابان ولیعصر، کوچهٔ سایه، پلاک ۸۸، واحد ۳",
+    customer: "مارکوس هیل",
+    email: "m.hale@postbox.com",
+    address: "تهران، جردن، خیابان سایه، پلاک ۸۸",
     items: [
-      { id: "p-habana", name: "هوانا رزروا شمارهٔ ۵", price: 148, qty: 1, image: IMG.cigars },
-      { id: "p-sterling", name: "ست کاتر استرلینگ", price: 49, qty: 1, image: IMG.cutter },
+      { id: "p-habana", name: "هوانا رزروا شمارهٔ ۵", price: 2_850_000, qty: 1, image: IMG.cigars },
+      { id: "p-sterling", name: "ست کاتر استرلینگ", price: 950_000, qty: 1, image: IMG.cutter },
     ],
-    subtotal: 197,
-    shipping: 0,
-    total: 197,
+    subtotal: 3_800_000,
+    shipping: 150_000,
+    total: 3_950_000,
     date: daysAgo(1),
     status: "pending",
   },
   {
     id: "SC-90388",
-    customer: "اینا کواچ",
+    customer: "اینس کواچ",
     email: "ines.k@nightowl.hr",
-    address: "زاگرب، خیابان ووکوار ۱۲",
+    address: "اصفهان، چهارباغ بالا، کوچهٔ گل، پلاک ۱۲",
     items: [
-      { id: "p-midnight", name: "قلیان میدنایت", price: 229, qty: 1, image: IMG.hookah },
+      { id: "p-midnight", name: "قلیان میدنایت", price: 4_400_000, qty: 1, image: IMG.hookah },
+      { id: "p-habana", name: "هوانا رزروا شمارهٔ ۵", price: 2_850_000, qty: 1, image: IMG.cigars },
     ],
-    subtotal: 229,
+    subtotal: 7_250_000,
     shipping: 0,
-    total: 229,
+    total: 7_250_000,
     date: daysAgo(2),
     status: "pending",
   },
   {
     id: "SC-90341",
-    customer: "دیمیتری ولکوف",
+    customer: "دمیتری ولکوف",
     email: "d.volkov@mailbox.org",
-    address: "لندن، میدان اکسچنج ۱۴، E1 6AN",
+    address: "شیراز، معالی‌آباد، بلوار پزشکان، پلاک ۱۴",
     items: [
-      { id: "p-golden", name: "بلندِ ساعت طلایی — ۵۰ گرم", price: 24.5, qty: 3, image: IMG.tobacco },
-      { id: "p-ember", name: "فندک برنجی اِمبِر", price: 59, qty: 1, image: IMG.lighter },
+      { id: "p-golden", name: "بلندِ ساعت طلایی — ۵۰ گرم", price: 480_000, qty: 3, image: IMG.tobacco },
+      { id: "p-ember", name: "فندک برنجی اِمبِر", price: 1_150_000, qty: 1, image: IMG.lighter },
     ],
-    subtotal: 132.5,
-    shipping: 12,
-    total: 144.5,
+    subtotal: 2_590_000,
+    shipping: 150_000,
+    total: 2_740_000,
     date: daysAgo(4),
     status: "shipped",
   },
@@ -309,14 +314,14 @@ export const SEED_ORDERS: Order[] = [
     id: "SC-90297",
     customer: "سوفیا مارکتی",
     email: "sofia.m@atelier.it",
-    address: "تورین، خیابان دل فومو ۳",
+    address: "مشهد، احمدآباد، خیابان راهنمایی، پلاک ۳",
     items: [
-      { id: "p-briar", name: "پیپ بریروود میراثی", price: 189, qty: 1, image: IMG.pipe },
-      { id: "p-golden", name: "بلندِ ساعت طلایی — ۵۰ گرم", price: 24.5, qty: 2, image: IMG.tobacco },
+      { id: "p-briar", name: "پیپ بریروود میراثی", price: 3_600_000, qty: 1, image: IMG.pipe },
+      { id: "p-golden", name: "بلندِ ساعت طلایی — ۵۰ گرم", price: 480_000, qty: 2, image: IMG.tobacco },
     ],
-    subtotal: 238,
-    shipping: 0,
-    total: 238,
+    subtotal: 4_560_000,
+    shipping: 150_000,
+    total: 4_710_000,
     date: daysAgo(6),
     status: "delivered",
   },
@@ -324,14 +329,14 @@ export const SEED_ORDERS: Order[] = [
     id: "SC-90254",
     customer: "آرتور بلین",
     email: "a.blaine@ledger.co",
-    address: "بوستون، خیابان روپ‌واک ۳۰۱",
+    address: "تبریز، ولیعصر، خیابان ابرسان، پلاک ۳۰۱",
     items: [
-      { id: "p-vault", name: "هیومیدار صندوقچهٔ سدر", price: 129, qty: 1, image: IMG.humidor },
-      { id: "p-rolling", name: "ست پیچ کلاسیک", price: 19, qty: 2, image: IMG.rolling },
+      { id: "p-vault", name: "هیومیدار صندوقچهٔ سدر", price: 2_500_000, qty: 1, image: IMG.humidor },
+      { id: "p-rolling", name: "ست پیچ کلاسیک", price: 380_000, qty: 2, image: IMG.rolling },
     ],
-    subtotal: 167,
-    shipping: 0,
-    total: 167,
+    subtotal: 3_260_000,
+    shipping: 150_000,
+    total: 3_410_000,
     date: daysAgo(9),
     status: "delivered",
   },
@@ -339,22 +344,22 @@ export const SEED_ORDERS: Order[] = [
     id: "SC-90210",
     customer: "یوکی تاناکا",
     email: "yuki.t@kumo.jp",
-    address: "توکیو، گینزا ۲-۷-۴",
+    address: "کرج، گوهردشت، خیابان انقلاب، پلاک ۲",
     items: [
-      { id: "p-ember", name: "فندک برنجی اِمبِر", price: 59, qty: 2, image: IMG.lighter },
+      { id: "p-ember", name: "فندک برنجی اِمبِر", price: 1_150_000, qty: 2, image: IMG.lighter },
     ],
-    subtotal: 118,
-    shipping: 12,
-    total: 130,
+    subtotal: 2_300_000,
+    shipping: 150_000,
+    total: 2_450_000,
     date: daysAgo(12),
     status: "cancelled",
   },
 ];
 
 export const WARNINGS = [
-  "هشدار: مصرف دخانیات عامل اصلی سرطان ریه، سکتهٔ قلبی و مغزی است.",
-  "فروش به افراد زیر ۱۸ سال ممنوع است و پیگرد قانونی دارد.",
-  "هشدار: مصرف دخانیات باعث نارسایی جنین و مرگ زودرس می‌شود.",
-  "ترک سیگار خطر بیماری‌های قلبی و ریوی را به‌شدت کاهش می‌دهد.",
-  "هشدار: دود قلیان حاوی مواد سمی و سرطان‌زا است.",
+  "هشدار: این محصول حاوی نیکوتین است. نیکوتین ماده‌ای اعتیادآور است.",
+  "فقط ۱۸+ — هنگام تحویل، مدرک شناسایی الزامی است.",
+  "مصرف دخانیات عامل سرطان ریه، بیماری قلبی و آمفیزم است.",
+  "فروش به افراد زیر سن قانونی جرم است. همهٔ سفارش‌ها راستی‌آزمایی می‌شوند.",
+  "ترک دخانیات، خطر بیماری‌های جدی را به‌شدت کاهش می‌دهد.",
 ];

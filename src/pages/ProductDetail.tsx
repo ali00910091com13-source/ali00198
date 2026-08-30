@@ -72,7 +72,7 @@ export default function ProductDetail() {
                 className={`w-full aspect-square object-cover ${soldOut ? "opacity-40 grayscale" : ""}`}
               />
               {product.badge && (
-                <span className="absolute top-4 start-4 bg-ember text-[#211507] text-[10px] font-bold px-2.5 py-1.5 rounded-sm">
+                <span className="absolute top-4 start-4 bg-ember text-white text-[10px] font-bold px-2.5 py-1.5 rounded-lg shadow-sm">
                   {product.badge}
                 </span>
               )}
@@ -179,7 +179,7 @@ export default function ProductDetail() {
               </span>
               <p className="leading-relaxed">
                 اگر قبل از ساعت ۱۶ سفارش بدهید، همان روز در جعبهٔ روکش‌سدر ارسال می‌شود. ارسال
-                رایگان برای خرید بالای ۱۵۰ دلار. هنگام تحویل، مدرک شناسایی (۱۸+) لازم است.
+                رایگان برای خرید بالای ۵ میلیون تومان. هنگام تحویل، مدرک شناسایی (۱۸+) لازم است.
               </p>
             </div>
           </Reveal>

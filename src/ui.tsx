@@ -188,6 +188,28 @@ export const IconLeaf = (p: IconProps) => (
   </svg>
 );
 
+export const IconShield = (p: IconProps) => (
+  <svg {...base(p)}>
+    <path d="M12 21.5s-8-3.6-8-9.5V5.5L12 2.5l8 3v6.5c0 5.9-8 9.5-8 9.5z" />
+    <path d="m8.7 11.8 2.4 2.4 4.4-4.6" />
+  </svg>
+);
+
+export const IconSparkle = (p: IconProps) => (
+  <svg {...base(p)}>
+    <path d="M12 3.5 14 9.5 20 11.5 14 13.5 12 19.5 10 13.5 4 11.5 10 9.5 12 3.5z" />
+    <path d="M18.5 3.5v3.2M16.9 5.1h3.2M5.5 17.3v2.6M4.2 18.6h2.6" />
+  </svg>
+);
+
+export const IconUsers = (p: IconProps) => (
+  <svg {...base(p)}>
+    <circle cx="9" cy="8" r="3.2" />
+    <path d="M3.5 19.5c0-3 2.5-5 5.5-5s5.5 2 5.5 5" />
+    <path d="M15.5 5.6a3.2 3.2 0 0 1 0 4.8M17.6 14.9c1.6.8 2.9 2.4 2.9 4.6" />
+  </svg>
+);
+
 /* ------------------------------------------------------------------ */
 /*  Scroll reveal                                                      */
 /* ------------------------------------------------------------------ */
