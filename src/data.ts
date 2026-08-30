@@ -1,14 +1,14 @@
 /* ------------------------------------------------------------------ */
-/*  Smoke City — data model & seed content                             */
+/*  اسموک سیتی — مدل داده و محتوای اولیه                                 */
 /* ------------------------------------------------------------------ */
 
 export type Category =
-  | "Cigars"
-  | "Pipe Tobacco"
-  | "Pipes"
-  | "Hookah"
-  | "Rolling"
-  | "Accessories";
+  | "سیگار برگ"
+  | "توتون پیپ"
+  | "پیپ و ابزار"
+  | "قلیان"
+  | "پیچ و کاغذ"
+  | "لوازم جانبی";
 
 export interface Product {
   id: string;
@@ -52,15 +52,49 @@ export interface Order {
 }
 
 export const CATEGORIES: Category[] = [
-  "Cigars",
-  "Pipe Tobacco",
-  "Pipes",
-  "Hookah",
-  "Rolling",
-  "Accessories",
+  "سیگار برگ",
+  "توتون پیپ",
+  "پیپ و ابزار",
+  "قلیان",
+  "پیچ و کاغذ",
+  "لوازم جانبی",
 ];
 
 export const ADMIN_CREDENTIALS = { username: "admin", password: "ember2024" };
+
+/* ------------------------------------------------------------------ */
+/*  ابزارهای فارسی‌سازی اعداد، تاریخ و مبلغ                              */
+/* ------------------------------------------------------------------ */
+
+const FA_DIGITS: Record<string, string> = {
+  "0": "۰", "1": "۱", "2": "۲", "3": "۳", "4": "۴",
+  "5": "۵", "6": "۶", "7": "۷", "8": "۸", "9": "۹",
+};
+
+export const faD = (v: string | number) =>
+  String(v)
+    .replace(/[0-9]/g, (d) => FA_DIGITS[d])
+    .replace(/,/g, "٬")
+    .replace(/\./g, "٫");
+
+export const faNum = (n: number) => faD(n.toLocaleString("en-US"));
+
+export const fmt = (n: number) =>
+  faD(n.toLocaleString("en-US", { maximumFractionDigits: 2 })) + " دلار";
+
+export const fmtDate = (iso: string) =>
+  new Date(iso).toLocaleDateString("fa-IR", { day: "numeric", month: "long", year: "numeric" });
+
+export const timeAgo = (iso: string) => {
+  const s = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+  if (s < 60) return "همین حالا";
+  const m = Math.floor(s / 60);
+  if (m < 60) return `${faNum(m)} دقیقه پیش`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${faNum(h)} ساعت پیش`;
+  const d = Math.floor(h / 24);
+  return `${faNum(d)} روز پیش`;
+};
 
 export const IMG = {
   hero: "https://image.qwenlm.ai/generated-images/b321c60a-b66e-4d70-a3a4-f89b51381920/_result.png",
@@ -75,147 +109,147 @@ export const IMG = {
 };
 
 export const IMAGE_LIBRARY: { label: string; url: string }[] = [
-  { label: "Cigar box", url: IMG.cigars },
-  { label: "Tobacco pouch", url: IMG.tobacco },
-  { label: "Briar pipe", url: IMG.pipe },
-  { label: "Brass lighter", url: IMG.lighter },
-  { label: "Hookah", url: IMG.hookah },
-  { label: "Rolling kit", url: IMG.rolling },
-  { label: "Humidor", url: IMG.humidor },
-  { label: "Cigar cutter", url: IMG.cutter },
+  { label: "جعبه سیگار برگ", url: IMG.cigars },
+  { label: "بسته توتون", url: IMG.tobacco },
+  { label: "پیپ بریار", url: IMG.pipe },
+  { label: "فندک برنجی", url: IMG.lighter },
+  { label: "قلیان", url: IMG.hookah },
+  { label: "ست پیچ", url: IMG.rolling },
+  { label: "هیومیدار", url: IMG.humidor },
+  { label: "کاتر سیگار", url: IMG.cutter },
 ];
 
 export const SEED_PRODUCTS: Product[] = [
   {
     id: "p-habana",
-    name: "Habana Reserva No. 5",
-    category: "Cigars",
+    name: "هوانا رزروا شمارهٔ ۵",
+    category: "سیگار برگ",
     price: 148,
     stock: 14,
     sku: "SC-CIG-005",
-    origin: "Havana, Cuba",
+    origin: "هاوانا، کوبا",
     rating: 4.9,
     reviews: 212,
     description:
-      "Twenty-five months of cedar-aged filler wrapped in a silky Ecuadorian Corojo leaf. Our cellar's crown jewel — slow-burning, imbalanced in all the right ways, and finished with a cool grey ash that refuses to drop.",
-    notes: ["Cedar", "Dark cocoa", "Espresso", "White pepper"],
+      "بیست‌وپنج ماه در چوب سدر کهنه شده؛ پیچی با روکش برگ کوروبوی اکوادور که نرم مثل ابریشم است. افتخار سردابهٔ ما — آرام‌سوز، بی‌نقص و با خاکستری سرد و یکدستی که حاضر نیست بریزد.",
+    notes: ["سدر", "کاکائوی تلخ", "اسپرسو", "فلفل سفید"],
     image: IMG.cigars,
     featured: true,
-    badge: "Best Seller",
+    badge: "پرفروش",
   },
   {
     id: "p-golden",
-    name: "Golden Hour Blend — 50g",
-    category: "Pipe Tobacco",
+    name: "بلندِ ساعت طلایی — ۵۰ گرم",
+    category: "توتون پیپ",
     price: 24.5,
     oldPrice: 29,
     stock: 42,
     sku: "SC-TOB-012",
-    origin: "Copenhagen, Denmark",
+    origin: "کپنهاگ، دانمارک",
     rating: 4.7,
     reviews: 158,
     description:
-      "A bright Virginia base cavendished with just enough Perique to keep things interesting. Pressed, sliced and tinned the week it arrives. Packs easy, burns dry, leaves the room smelling like an autumn porch.",
-    notes: ["Honey", "Hay", "Stone fruit", "Fig"],
+      "پایهٔ ویرجینیای روشن با کمی پریک که مزه را از یکنواختی درمی‌آورد. همان هفتهٔ رسیدن، فشرده، ورق و قوطی می‌شود. راحت فشرده می‌شود، خشک می‌سوزد و بوی پاییز را به خانه می‌آورد.",
+    notes: ["عسل", "کاه", "میوه‌های هسته‌دار", "انجیر"],
     image: IMG.tobacco,
-    badge: "Small Batch",
+    badge: "تولید محدود",
   },
   {
     id: "p-briar",
-    name: "Briarwood Heritage Pipe",
-    category: "Pipes",
+    name: "پیپ بریروود میراثی",
+    category: "پیپ و ابزار",
     price: 189,
     stock: 7,
     sku: "SC-PIP-031",
-    origin: "Pesaro, Italy",
+    origin: "پزارو، ایتالیا",
     rating: 4.8,
     reviews: 96,
     description:
-      "Hand-carved from 28-year-old Calabrian briar with a flame grain that photographs better than it smokes — and it smokes beautifully. Fitted with a hand-cut amber acrylic stem and a whisper-thin airway.",
-    notes: ["Flame grain", "Amber stem", "9mm filter", "Hand-cut"],
+      "از بریار ۲۸ سالهٔ کالابریا، تراشِ دست با رگه‌های شعله‌ای که از عکس‌هایش هم زیباتر می‌سوزد. دهانهٔ اکریلیک کهرباییِ دست‌ساز و مجرای هوای باریک و نرم دارد.",
+    notes: ["رگهٔ شعله‌ای", "دهانهٔ کهربایی", "فیلتر ۹ میلی‌متری", "تراش دستی"],
     image: IMG.pipe,
-    badge: "Hand-Carved",
+    badge: "ساخت دست",
   },
   {
     id: "p-ember",
-    name: "Ember Brass Lighter",
-    category: "Accessories",
+    name: "فندک برنجی اِمبِر",
+    category: "لوازم جانبی",
     price: 59,
     stock: 23,
     sku: "SC-ACC-077",
-    origin: "Birmingham, England",
+    origin: "بیرمنگام، انگلستان",
     rating: 4.6,
     reviews: 301,
     description:
-      "Solid machined brass with a soft-flame wheel tuned for cedar spills, not butane torches. Develops a honest patina within a month. Guaranteed for life — if it fails, we fix it or replace it. No receipts needed.",
-    notes: ["Solid brass", "Soft flame", "Lifetime guarantee", "Windproof cap"],
+      "برنج یکپارچهٔ ماشین‌کاری‌شده با شعلهٔ ملایمی که برای روشن‌کردن با تراشهٔ سدر تنظیم شده، نه مشعل بوتان. ظرف یک ماه پتینهٔ اصیل خودش را پیدا می‌کند. گارانتی مادام‌العمر — خراب شد، تعمیر یا تعویض؛ بدون فاکتور.",
+    notes: ["برنج یکپارچه", "شعلهٔ ملایم", "گارانتی مادام‌العمر", "درپوش ضدباد"],
     image: IMG.lighter,
     featured: true,
   },
   {
     id: "p-midnight",
-    name: "Midnight Hookah",
-    category: "Hookah",
+    name: "قلیان میدنایت",
+    category: "قلیان",
     price: 229,
     stock: 5,
     sku: "SC-HKA-009",
-    origin: "Istanbul, Türkiye",
+    origin: "استانبول، ترکیه",
     rating: 4.9,
     reviews: 74,
     description:
-      "Black borosilicate base, brass stem, and a draw so smooth it feels borrowed from something twice the price. Ships with dual hoses, a ceramic bowl and enough coconut coal to get you through the week.",
-    notes: ["Borosilicate glass", "Brass stem", "Dual hose", "Ceramic bowl"],
+      "مخزن شیشهٔ بوروسیلیکات مشکی، ساقهٔ برنجی و کامی آن‌قدر نرم که انگار از قلیانی دو برابر این قیمت قرض گرفته‌اید. با دو شلنگ، سری سرامیکی و زغال نارگیل کافی برای یک هفته ارسال می‌شود.",
+    notes: ["شیشهٔ بوروسیلیکات", "ساقهٔ برنجی", "دو شلنگ", "سری سرامیکی"],
     image: IMG.hookah,
     featured: true,
-    badge: "Limited",
+    badge: "تعداد محدود",
   },
   {
     id: "p-rolling",
-    name: "The Rolling Kit",
-    category: "Rolling",
+    name: "ست پیچ کلاسیک",
+    category: "پیچ و کاغذ",
     price: 19,
     stock: 60,
     sku: "SC-ROL-044",
-    origin: "Périgueux, France",
+    origin: "پریگو، فرانسه",
     rating: 4.5,
     reviews: 428,
     description:
-      "Everything the ritual asks for: two booklets of unbleached hemp papers, crutch tips, a brass roller that never jams, and a magnetic tin quiet enough for a library. No dyes, no gum flavour, no nonsense.",
-    notes: ["Unbleached hemp", "Brass roller", "Magnetic tin", "Crutch tips"],
+      "هرچه آیین پیچیدن لازم دارد: دو دفترچه کاغذ کنفی بدون سفیدکننده، فیلتر دهانه، غلتک برنجی‌ای که هرگز گیر نمی‌کند و قوطی مگنتی‌ای که حتی در کتابخانه هم سر و صدا نمی‌کند. بدون رنگ، بدون طعم، بدون حاشیه.",
+    notes: ["کنف بدون سفیدکننده", "غلتک برنجی", "قوطی مگنتی", "فیلتر دهانه"],
     image: IMG.rolling,
   },
   {
     id: "p-vault",
-    name: "Cedar Vault Humidor",
-    category: "Accessories",
+    name: "هیومیدار صندوقچهٔ سدر",
+    category: "لوازم جانبی",
     price: 129,
     stock: 9,
     sku: "SC-ACC-019",
-    origin: "Valencia, Spain",
+    origin: "والنسیا، اسپانیا",
     rating: 4.8,
     reviews: 133,
     description:
-      "Holds forty cigars at a lazy 69% humidity, thanks to Spanish cedar lining and a magnetic-glass hygrometer you can actually trust. The piano hinge closes like a bank vault — because that's the point.",
-    notes: ["Spanish cedar", "40-cigar capacity", "Magnetic hygrometer", "Piano hinge"],
+      "به‌لطف روکش سدر اسپانیایی و رطوبت‌سنج مغناطیسیِ قابل‌اعتماد، چهل برگ را در رطوبت تنبلِ ۶۹٪ نگه می‌دارد. لولای پیانویی‌اش مثل گاوصندوق بسته می‌شود — چون دقیقاً برای همین ساخته شده.",
+    notes: ["سدر اسپانیایی", "ظرفیت ۴۰ برگ", "رطوبت‌سنج مغناطیسی", "لولای پیانویی"],
     image: IMG.humidor,
     featured: true,
   },
   {
     id: "p-sterling",
-    name: "Sterling Cutter Set",
-    category: "Accessories",
+    name: "ست کاتر استرلینگ",
+    category: "لوازم جانبی",
     price: 49,
     oldPrice: 64,
     stock: 3,
     sku: "SC-ACC-092",
-    origin: "Solingen, Germany",
+    origin: "زولینگن، آلمان",
     rating: 4.7,
     reviews: 88,
     description:
-      "A double-guillotine cutter and punch in brushed stainless, honed in Solingen to cut a 54 ring gauge clean enough to hear. Presented in a walnut slide-box. Three sets left — when they're gone, they're gone.",
-    notes: ["Double guillotine", "Punch cap", "Walnut box", "54-ring gauge"],
+      "کاتر گیوتین دوبل و پانچ از استیل ضدزنگ که در زولینگن چنان تیز شده رینگ ۵۴ را تمیز می‌بُرد و صدایش شنیده می‌شود. در جعبهٔ کشویی گردویی عرضه می‌شود. فقط سه ست مانده — تمام شود، تمام است.",
+    notes: ["گیوتین دوبل", "پانچ کلاهکی", "جعبهٔ گردویی", "رینگ ۵۴"],
     image: IMG.cutter,
-    badge: "Last Call",
+    badge: "آخرین فرصت",
   },
 ];
 
@@ -229,12 +263,12 @@ const daysAgo = (n: number) => {
 export const SEED_ORDERS: Order[] = [
   {
     id: "SC-90412",
-    customer: "Marcus Hale",
-    email: "m.hale@postbox.com",
-    address: "88 Foundry Lane, Chicago, IL 60642",
+    customer: "کاوه حیدری",
+    email: "k.heydari@postbox.ir",
+    address: "تهران، خیابان ولیعصر، کوچهٔ سایه، پلاک ۸۸، واحد ۳",
     items: [
-      { id: "p-habana", name: "Habana Reserva No. 5", price: 148, qty: 1, image: IMG.cigars },
-      { id: "p-sterling", name: "Sterling Cutter Set", price: 49, qty: 1, image: IMG.cutter },
+      { id: "p-habana", name: "هوانا رزروا شمارهٔ ۵", price: 148, qty: 1, image: IMG.cigars },
+      { id: "p-sterling", name: "ست کاتر استرلینگ", price: 49, qty: 1, image: IMG.cutter },
     ],
     subtotal: 197,
     shipping: 0,
@@ -244,11 +278,11 @@ export const SEED_ORDERS: Order[] = [
   },
   {
     id: "SC-90388",
-    customer: "Ines Kovač",
+    customer: "اینا کواچ",
     email: "ines.k@nightowl.hr",
-    address: "Ulica Grada Vukovara 12, Zagreb",
+    address: "زاگرب، خیابان ووکوار ۱۲",
     items: [
-      { id: "p-midnight", name: "Midnight Hookah", price: 229, qty: 1, image: IMG.hookah },
+      { id: "p-midnight", name: "قلیان میدنایت", price: 229, qty: 1, image: IMG.hookah },
     ],
     subtotal: 229,
     shipping: 0,
@@ -258,12 +292,12 @@ export const SEED_ORDERS: Order[] = [
   },
   {
     id: "SC-90341",
-    customer: "Dmitri Volkov",
+    customer: "دیمیتری ولکوف",
     email: "d.volkov@mailbox.org",
-    address: "14 Coal Exchange Sq, London E1 6AN",
+    address: "لندن، میدان اکسچنج ۱۴، E1 6AN",
     items: [
-      { id: "p-golden", name: "Golden Hour Blend — 50g", price: 24.5, qty: 3, image: IMG.tobacco },
-      { id: "p-ember", name: "Ember Brass Lighter", price: 59, qty: 1, image: IMG.lighter },
+      { id: "p-golden", name: "بلندِ ساعت طلایی — ۵۰ گرم", price: 24.5, qty: 3, image: IMG.tobacco },
+      { id: "p-ember", name: "فندک برنجی اِمبِر", price: 59, qty: 1, image: IMG.lighter },
     ],
     subtotal: 132.5,
     shipping: 12,
@@ -273,12 +307,12 @@ export const SEED_ORDERS: Order[] = [
   },
   {
     id: "SC-90297",
-    customer: "Sofia Marchetti",
+    customer: "سوفیا مارکتی",
     email: "sofia.m@atelier.it",
-    address: "Via del Fumo 3, Torino 10122",
+    address: "تورین، خیابان دل فومو ۳",
     items: [
-      { id: "p-briar", name: "Briarwood Heritage Pipe", price: 189, qty: 1, image: IMG.pipe },
-      { id: "p-golden", name: "Golden Hour Blend — 50g", price: 24.5, qty: 2, image: IMG.tobacco },
+      { id: "p-briar", name: "پیپ بریروود میراثی", price: 189, qty: 1, image: IMG.pipe },
+      { id: "p-golden", name: "بلندِ ساعت طلایی — ۵۰ گرم", price: 24.5, qty: 2, image: IMG.tobacco },
     ],
     subtotal: 238,
     shipping: 0,
@@ -288,12 +322,12 @@ export const SEED_ORDERS: Order[] = [
   },
   {
     id: "SC-90254",
-    customer: "Arthur Blaine",
+    customer: "آرتور بلین",
     email: "a.blaine@ledger.co",
-    address: "301 Ropewalk, Boston, MA 02110",
+    address: "بوستون، خیابان روپ‌واک ۳۰۱",
     items: [
-      { id: "p-vault", name: "Cedar Vault Humidor", price: 129, qty: 1, image: IMG.humidor },
-      { id: "p-rolling", name: "The Rolling Kit", price: 19, qty: 2, image: IMG.rolling },
+      { id: "p-vault", name: "هیومیدار صندوقچهٔ سدر", price: 129, qty: 1, image: IMG.humidor },
+      { id: "p-rolling", name: "ست پیچ کلاسیک", price: 19, qty: 2, image: IMG.rolling },
     ],
     subtotal: 167,
     shipping: 0,
@@ -303,11 +337,11 @@ export const SEED_ORDERS: Order[] = [
   },
   {
     id: "SC-90210",
-    customer: "Yuki Tanaka",
+    customer: "یوکی تاناکا",
     email: "yuki.t@kumo.jp",
-    address: "2-7-4 Ginza, Chuo City, Tokyo",
+    address: "توکیو، گینزا ۲-۷-۴",
     items: [
-      { id: "p-ember", name: "Ember Brass Lighter", price: 59, qty: 2, image: IMG.lighter },
+      { id: "p-ember", name: "فندک برنجی اِمبِر", price: 59, qty: 2, image: IMG.lighter },
     ],
     subtotal: 118,
     shipping: 12,
@@ -317,27 +351,10 @@ export const SEED_ORDERS: Order[] = [
   },
 ];
 
-export const fmt = (n: number) =>
-  "$" + n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-export const fmtDate = (iso: string) =>
-  new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-
-export const timeAgo = (iso: string) => {
-  const s = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
-  if (s < 60) return "just now";
-  const m = Math.floor(s / 60);
-  if (m < 60) return `${m}m ago`;
-  const h = Math.floor(m / 60);
-  if (h < 24) return `${h}h ago`;
-  const d = Math.floor(h / 24);
-  return `${d}d ago`;
-};
-
 export const WARNINGS = [
-  "WARNING: This product contains nicotine. Nicotine is an addictive chemical.",
-  "21+ ONLY — PHOTO ID REQUIRED ON DELIVERY. NO EXCEPTIONS.",
-  "SMOKING CAUSES LUNG CANCER, HEART DISEASE AND EMPHYSEMA.",
-  "SALE TO MINORS IS A CRIME. WE VERIFY EVERY ORDER.",
-  "QUITTING SMOKING NOW GREATLY REDUCES SERIOUS HEALTH RISKS.",
+  "هشدار: مصرف دخانیات عامل اصلی سرطان ریه، سکتهٔ قلبی و مغزی است.",
+  "فروش به افراد زیر ۱۸ سال ممنوع است و پیگرد قانونی دارد.",
+  "هشدار: مصرف دخانیات باعث نارسایی جنین و مرگ زودرس می‌شود.",
+  "ترک سیگار خطر بیماری‌های قلبی و ریوی را به‌شدت کاهش می‌دهد.",
+  "هشدار: دود قلیان حاوی مواد سمی و سرطان‌زا است.",
 ];

@@ -1,8 +1,9 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { fmt, Order, Product, WARNINGS } from "./data";
+import { faNum, fmt, Order, Product, WARNINGS } from "./data";
 import { useStore } from "./store";
 import {
+  IconArrowLeft,
   IconArrowRight,
   IconCart,
   IconCheck,
@@ -11,7 +12,6 @@ import {
   IconMail,
   IconMapPin,
   IconMenu,
-  IconMinus,
   IconPhone,
   IconPlus,
   IconTrash,
@@ -21,7 +21,7 @@ import {
 } from "./ui";
 
 /* ------------------------------------------------------------------ */
-/*  Ambient background                                                 */
+/*  پس‌زمینهٔ محیطی — دود و نور                                           */
 /* ------------------------------------------------------------------ */
 
 export function SmokeBackground() {
@@ -52,9 +52,9 @@ export function SmokeBackground() {
           animationDelay: "-9s",
         }}
       />
-      {/* fine grain */}
+      {/* بافت نویز */}
       <div className="absolute inset-0 noise-layer opacity-[0.05]" />
-      {/* vignette */}
+      {/* وینیت */}
       <div
         className="absolute inset-0"
         style={{
@@ -67,7 +67,7 @@ export function SmokeBackground() {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Surgeon-general style warning ticker                               */
+/*  نوار هشدار بهداشتی متحرک                                              */
 /* ------------------------------------------------------------------ */
 
 export function WarningTicker() {
@@ -76,10 +76,7 @@ export function WarningTicker() {
     <div className="relative z-30 bg-ember text-[#211507] overflow-hidden">
       <div className="flex whitespace-nowrap animate-marquee w-max">
         {loop.map((w, i) => (
-          <span
-            key={i}
-            className="flex items-center gap-3 px-6 py-1.5 font-mono text-[10px] font-semibold tracking-[0.14em] uppercase"
-          >
+          <span key={i} className="flex items-center gap-3 px-6 py-1.5 text-[11px] font-bold">
             <IconFlame size={11} strokeWidth={2.2} />
             {w}
           </span>
@@ -90,7 +87,7 @@ export function WarningTicker() {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Navbar                                                             */
+/*  نوبار                                                               */
 /* ------------------------------------------------------------------ */
 
 export function Navbar() {
@@ -109,10 +106,10 @@ export function Navbar() {
   useEffect(() => setMenuOpen(false), [location.pathname]);
 
   const links = [
-    { to: "/", label: "Home" },
-    { to: "/shop", label: "Shop" },
-    { to: "/about", label: "The Craft" },
-    { to: "/contact", label: "Contact" },
+    { to: "/", label: "خانه" },
+    { to: "/shop", label: "فروشگاه" },
+    { to: "/about", label: "هنرِ دود" },
+    { to: "/contact", label: "تماس با ما" },
   ];
 
   return (
@@ -129,8 +126,13 @@ export function Navbar() {
             <span className="text-ember group-hover:animate-flicker">
               <IconFlame size={26} strokeWidth={1.5} />
             </span>
-            <span className="font-display text-[26px] tracking-[0.06em] leading-none text-cream">
-              SMOKE<span className="text-ember">&nbsp;CITY</span>
+            <span className="leading-none">
+              <span className="block font-display text-[23px] leading-none text-cream">
+                اسموک<span className="text-ember">&nbsp;سیتی</span>
+              </span>
+              <span className="block font-latin text-[9px] tracking-[0.42em] text-ash mt-1">
+                SMOKE CITY
+              </span>
             </span>
           </Link>
 
@@ -146,25 +148,23 @@ export function Navbar() {
             <button
               onClick={() => setCartOpen(true)}
               className="relative flex items-center gap-2 border border-line2 rounded-sm px-3.5 py-2 text-parch hover:border-ember hover:text-ember transition-colors cursor-pointer group"
-              aria-label="Open cart"
+              aria-label="بازکردن سبد خرید"
             >
               <IconCart size={17} />
-              <span className="hidden sm:inline font-mono text-[11px] tracking-[0.14em] uppercase">
-                Cart
-              </span>
+              <span className="hidden sm:inline text-sm font-semibold">سبد</span>
               {cartCount > 0 && (
                 <span
                   key={orderBump}
-                  className="absolute -top-2 -right-2 min-w-[19px] h-[19px] px-1 grid place-items-center rounded-full bg-ember text-[#211507] font-mono text-[10px] font-bold animate-rise"
+                  className="absolute -top-2 -left-2 min-w-[19px] h-[19px] px-1 grid place-items-center rounded-full bg-ember text-[#211507] text-[10px] font-bold animate-rise"
                 >
-                  {cartCount}
+                  {faNum(cartCount)}
                 </span>
               )}
             </button>
             <button
               className="md:hidden text-parch hover:text-ember transition-colors cursor-pointer p-1"
               onClick={() => setMenuOpen((v) => !v)}
-              aria-label="Toggle menu"
+              aria-label="باز و بسته کردن منو"
             >
               {menuOpen ? <IconX size={22} /> : <IconMenu size={22} />}
             </button>
@@ -172,7 +172,7 @@ export function Navbar() {
         </div>
       </header>
 
-      {/* mobile menu */}
+      {/* منوی موبایل */}
       <div
         className={`md:hidden fixed inset-0 z-50 transition-all duration-300 ${
           menuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
@@ -180,15 +180,15 @@ export function Navbar() {
       >
         <div className="absolute inset-0 bg-ink/80 backdrop-blur-sm" onClick={() => setMenuOpen(false)} />
         <div
-          className={`absolute top-0 right-0 h-full w-72 bg-coal border-l border-line flex flex-col transition-transform duration-300 ${
-            menuOpen ? "translate-x-0" : "translate-x-full"
+          className={`absolute top-0 left-0 h-full w-72 bg-coal border-s border-line flex flex-col transition-transform duration-300 ${
+            menuOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
           <div className="flex items-center justify-between p-5 border-b border-line">
             <span className="font-display text-xl text-cream">
-              SMOKE<span className="text-ember"> CITY</span>
+              اسموک<span className="text-ember"> سیتی</span>
             </span>
-            <button onClick={() => setMenuOpen(false)} className="text-fog hover:text-ember cursor-pointer" aria-label="Close menu">
+            <button onClick={() => setMenuOpen(false)} className="text-fog hover:text-ember cursor-pointer" aria-label="بستن منو">
               <IconX size={20} />
             </button>
           </div>
@@ -199,19 +199,19 @@ export function Navbar() {
                 to={l.to}
                 end={l.to === "/"}
                 className={({ isActive }) =>
-                  `font-display text-3xl tracking-wide py-2.5 border-b border-line/60 transition-colors ${
+                  `font-display text-3xl py-2.5 border-b border-line/60 transition-colors ${
                     isActive ? "text-ember" : "text-parch hover:text-cream"
                   }`
                 }
               >
-                <span className="font-mono text-[10px] text-copper mr-3 align-middle">0{i + 1}</span>
+                <span className="font-latin text-[10px] text-copper ms-3 align-middle">0{i + 1}</span>
                 {l.label}
               </NavLink>
             ))}
           </nav>
           <div className="mt-auto p-5 border-t border-line">
-            <p className="font-mono text-[10px] text-ash tracking-[0.18em] uppercase leading-relaxed">
-              21+ only · ID on delivery
+            <p className="text-[11px] text-ash font-semibold leading-relaxed">
+              فقط ۱۸+ · کنترل مدرک شناسایی هنگام تحویل
             </p>
           </div>
         </div>
@@ -221,7 +221,7 @@ export function Navbar() {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Footer                                                             */
+/*  فوتر                                                                */
 /* ------------------------------------------------------------------ */
 
 export function Footer() {
@@ -235,28 +235,28 @@ export function Footer() {
               <span className="text-ember">
                 <IconFlame size={24} />
               </span>
-              <span className="font-display text-2xl tracking-[0.06em] text-cream">
-                SMOKE<span className="text-ember">&nbsp;CITY</span>
+              <span className="font-display text-2xl text-cream">
+                اسموک<span className="text-ember">&nbsp;سیتی</span>
               </span>
             </div>
             <p className="mt-4 text-sm text-fog leading-relaxed max-w-xs">
-              Purveyors of fine tobacco since 2011. Every leaf aged in our own cellar,
-              every order packed by hand the day it leaves.
+              عرضه‌کنندهٔ دخانیات خاص از ۲۰۱۱. هر برگ در سردابهٔ خودمان کهنه می‌شود و هر
+              سفارش، همان روزی که راه می‌افتد، با دست بسته‌بندی می‌شود.
             </p>
-            <p className="mt-5 font-mono text-[10px] tracking-[0.16em] uppercase text-ash leading-relaxed">
-              Warning: smoking causes lung cancer, heart disease &amp; emphysema. 21+ only.
+            <p className="mt-5 text-[11px] font-semibold text-ash leading-relaxed">
+              هشدار: مصرف دخانیات باعث سرطان ریه، بیماری قلبی و آمفیزم می‌شود. فروش فقط به ۱۸+.
             </p>
           </div>
 
           <div>
-            <h4 className="font-mono text-[11px] tracking-[0.24em] uppercase text-copper">Explore</h4>
+            <h4 className="text-xs font-bold text-copper">بخش‌ها</h4>
             <ul className="mt-4 space-y-2.5 text-sm">
               {[
-                ["The Shop", "/shop"],
-                ["Our Craft", "/about"],
-                ["Contact", "/contact"],
-                ["All Cigars", "/shop?cat=Cigars"],
-                ["All Hookah", "/shop?cat=Hookah"],
+                ["فروشگاه", "/shop"],
+                ["هنرِ دود", "/about"],
+                ["تماس با ما", "/contact"],
+                ["همهٔ سیگار برگ‌ها", "/shop?cat=" + encodeURIComponent("سیگار برگ")],
+                ["همهٔ قلیان‌ها", "/shop?cat=" + encodeURIComponent("قلیان")],
               ].map(([label, to]) => (
                 <li key={to}>
                   <Link to={to} className="text-fog hover:text-ember transition-colors inline-flex items-center gap-1.5 group">
@@ -269,19 +269,17 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="font-mono text-[11px] tracking-[0.24em] uppercase text-copper">Visit</h4>
+            <h4 className="text-xs font-bold text-copper">نشانی</h4>
             <ul className="mt-4 space-y-3 text-sm text-fog">
               <li className="flex gap-2.5">
                 <IconMapPin size={15} className="text-ember shrink-0 mt-0.5" />
-                14 Coal Exchange Sq,
-                <br />
-                London E1 6AN
+                تهران، خیابان ولیعصر، میدان حسن‌آباد، پلاک ۱۴
               </li>
-              <li className="flex gap-2.5">
+              <li className="flex gap-2.5" dir="ltr">
                 <IconPhone size={15} className="text-ember shrink-0 mt-0.5" />
-                +44 20 7946 0911
+                ۰۲۱-۵۵۶۶۰۹۱۱
               </li>
-              <li className="flex gap-2.5">
+              <li className="flex gap-2.5" dir="ltr">
                 <IconMail size={15} className="text-ember shrink-0 mt-0.5" />
                 cellar@smokecity.co
               </li>
@@ -289,26 +287,26 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="font-mono text-[11px] tracking-[0.24em] uppercase text-copper">Hours</h4>
-            <ul className="mt-4 space-y-2 font-mono text-xs text-fog">
-              <li className="flex justify-between gap-4"><span>Mon — Fri</span><span className="text-parch">10:00 — 20:00</span></li>
-              <li className="flex justify-between gap-4"><span>Saturday</span><span className="text-parch">11:00 — 22:00</span></li>
-              <li className="flex justify-between gap-4"><span>Sunday</span><span className="text-parch">12:00 — 18:00</span></li>
+            <h4 className="text-xs font-bold text-copper">ساعت کاری</h4>
+            <ul className="mt-4 space-y-2 text-xs text-fog">
+              <li className="flex justify-between gap-4"><span>شنبه تا چهارشنبه</span><span className="text-parch">۱۰:۰۰ تا ۲۰:۰۰</span></li>
+              <li className="flex justify-between gap-4"><span>پنجشنبه</span><span className="text-parch">۱۱:۰۰ تا ۲۲:۰۰</span></li>
+              <li className="flex justify-between gap-4"><span>جمعه</span><span className="text-parch">۱۲:۰۰ تا ۱۸:۰۰</span></li>
             </ul>
             <div className="mt-5 flex items-center gap-2 border border-line rounded-sm px-3 py-2.5 w-fit">
               <IconLock size={13} className="text-ash" />
-              <Link to="/admin" className="font-mono text-[10px] tracking-[0.18em] uppercase text-ash hover:text-ember transition-colors">
-                Staff back office
+              <Link to="/admin" className="text-[11px] font-semibold text-ash hover:text-ember transition-colors">
+                پنل مدیریت
               </Link>
             </div>
           </div>
         </div>
 
         <div className="mt-14 border-t border-line pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="font-mono text-[10px] tracking-[0.18em] uppercase text-ash">
-            © {year} Smoke City Ltd. — Not intended for minors.
+          <p className="text-[11px] font-semibold text-ash">
+            © {faNum(year)} اسموک سیتی — فروش به افراد زیر ۱۸ سال ممنوع است.
           </p>
-          <p className="font-display text-5xl md:text-6xl leading-none text-outline-faint select-none tracking-wider">
+          <p className="font-latin text-5xl md:text-6xl leading-none text-outline-faint select-none tracking-wider">
             SMOKE CITY
           </p>
         </div>
@@ -318,7 +316,7 @@ export function Footer() {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Cart drawer + checkout                                             */
+/*  سبد خرید + تسویه‌حساب                                                 */
 /* ------------------------------------------------------------------ */
 
 export function CartDrawer() {
@@ -352,7 +350,7 @@ export function CartDrawer() {
     };
     setErrors(errs);
     if (Object.values(errs).some(Boolean)) {
-      toast("Please complete the delivery details", "warn");
+      toast("لطفاً اطلاعات ارسال را کامل کنید", "warn");
       return;
     }
     const order = checkout({
@@ -377,21 +375,21 @@ export function CartDrawer() {
       />
       <div
         ref={panelRef}
-        className={`absolute top-0 right-0 h-full w-full max-w-md bg-coal border-l border-line flex flex-col transition-transform duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-          cartOpen ? "translate-x-0" : "translate-x-full"
+        className={`absolute top-0 left-0 h-full w-full max-w-md bg-coal border-s border-line flex flex-col transition-transform duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          cartOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        {/* header */}
+        {/* سربرگ */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-line">
-          <h3 className="font-display text-2xl tracking-wide text-cream">
-            {step === "done" ? "ORDER CONFIRMED" : step === "checkout" ? "DELIVERY" : "YOUR CART"}
+          <h3 className="font-display text-2xl text-cream">
+            {step === "done" ? "سفارش ثبت شد" : step === "checkout" ? "اطلاعات ارسال" : "سبد خرید"}
           </h3>
-          <button onClick={close} className="text-fog hover:text-ember transition-colors cursor-pointer" aria-label="Close cart">
+          <button onClick={close} className="text-fog hover:text-ember transition-colors cursor-pointer" aria-label="بستن سبد">
             <IconX size={20} />
           </button>
         </div>
 
-        {/* body */}
+        {/* بدنه */}
         <div className="flex-1 overflow-y-auto">
           {step === "cart" &&
             (cartLines.length === 0 ? (
@@ -400,10 +398,10 @@ export function CartDrawer() {
                   <span className="inline-block text-line2">
                     <IconCart size={52} strokeWidth={1.2} />
                   </span>
-                  <p className="font-display text-2xl text-fog mt-4 tracking-wide">Nothing burning yet</p>
-                  <p className="text-sm text-ash mt-2">Your cart is empty. The cellar is full.</p>
+                  <p className="font-display text-2xl text-fog mt-4">هنوز چیزی روشن نشده</p>
+                  <p className="text-sm text-ash mt-2">سبدتان خالی است، ولی سردابه پر است.</p>
                   <Link to="/shop" onClick={close} className="btn-ember mt-6">
-                    Browse the shop <IconArrowRight size={14} />
+                    دیدن فروشگاه <IconArrowLeft size={14} />
                   </Link>
                 </div>
               </div>
@@ -420,19 +418,19 @@ export function CartDrawer() {
                     </Link>
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between gap-3">
-                        <p className="font-display text-lg leading-tight text-cream tracking-wide">{product.name}</p>
+                        <p className="font-display text-lg leading-tight text-cream">{product.name}</p>
                         <button
                           onClick={() => removeFromCart(product.id)}
                           className="text-ash hover:text-[#d98a7a] transition-colors cursor-pointer self-start"
-                          aria-label={`Remove ${product.name}`}
+                          aria-label={`حذف ${product.name}`}
                         >
                           <IconTrash size={15} />
                         </button>
                       </div>
-                      <p className="font-mono text-[10px] tracking-[0.16em] uppercase text-copper mt-0.5">{product.category}</p>
+                      <p className="text-[10px] font-bold text-copper mt-0.5">{product.category}</p>
                       <div className="flex items-center justify-between mt-3">
                         <QtyStepper compact qty={qty} setQty={(q) => setCartQty(product.id, q)} max={product.stock} />
-                        <span className="font-mono text-sm text-ember2">{fmt(product.price * qty)}</span>
+                        <span className="text-sm font-bold text-ember2">{fmt(product.price * qty)}</span>
                       </div>
                     </div>
                   </li>
@@ -443,45 +441,46 @@ export function CartDrawer() {
           {step === "checkout" && (
             <div className="p-6 space-y-4">
               <div>
-                <label className="font-mono text-[10px] tracking-[0.2em] uppercase text-fog">Full name</label>
+                <label className="text-[11px] font-bold text-fog">نام و نام خانوادگی</label>
                 <input
                   className={`field mt-1.5 ${errors.customer ? "field-error" : ""}`}
                   value={form.customer}
                   onChange={(e) => setForm({ ...form, customer: e.target.value })}
-                  placeholder="Arthur Blaine"
+                  placeholder="مثلاً کاوه حیدری"
                 />
               </div>
               <div>
-                <label className="font-mono text-[10px] tracking-[0.2em] uppercase text-fog">Email</label>
+                <label className="text-[11px] font-bold text-fog">ایمیل</label>
                 <input
                   className={`field mt-1.5 ${errors.email ? "field-error" : ""}`}
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
                   placeholder="you@postbox.com"
                   type="email"
+                  dir="ltr"
                 />
               </div>
               <div>
-                <label className="font-mono text-[10px] tracking-[0.2em] uppercase text-fog">Delivery address</label>
+                <label className="text-[11px] font-bold text-fog">آدرس تحویل</label>
                 <textarea
                   className={`field mt-1.5 min-h-[84px] resize-none ${errors.address ? "field-error" : ""}`}
                   value={form.address}
                   onChange={(e) => setForm({ ...form, address: e.target.value })}
-                  placeholder="Street, city, postcode"
+                  placeholder="خیابان، شهر، کد پستی"
                 />
               </div>
-              <div className="border border-line rounded-sm p-4 space-y-2 font-mono text-xs text-fog">
-                <div className="flex justify-between"><span>Subtotal</span><span className="text-parch">{fmt(cartSubtotal)}</span></div>
+              <div className="border border-line rounded-sm p-4 space-y-2 text-xs text-fog">
+                <div className="flex justify-between"><span>جمع سبد</span><span className="text-parch">{fmt(cartSubtotal)}</span></div>
                 <div className="flex justify-between">
-                  <span>Shipping</span>
-                  <span className={shipping === 0 ? "text-jade" : "text-parch"}>{shipping === 0 ? "FREE" : fmt(shipping)}</span>
+                  <span>هزینهٔ ارسال</span>
+                  <span className={shipping === 0 ? "text-jade" : "text-parch"}>{shipping === 0 ? "رایگان" : fmt(shipping)}</span>
                 </div>
-                <div className="flex justify-between border-t border-line pt-2 text-sm text-cream">
-                  <span>Total</span><span className="text-ember2">{fmt(cartSubtotal + shipping)}</span>
+                <div className="flex justify-between border-t border-line pt-2 text-sm text-cream font-bold">
+                  <span>مبلغ کل</span><span className="text-ember2">{fmt(cartSubtotal + shipping)}</span>
                 </div>
               </div>
-              <p className="font-mono text-[10px] text-ash leading-relaxed">
-                A photo ID proving you are 21+ will be requested at the door. No ID, no parcel.
+              <p className="text-[11px] text-ash leading-relaxed">
+                هنگام تحویل، مدرک شناسایی معتبر (۱۸+) درخواست می‌شود. بدون مدرک، مرسوله تحویل داده نخواهد شد.
               </p>
             </div>
           )}
@@ -491,36 +490,36 @@ export function CartDrawer() {
               <span className="inline-grid place-items-center h-16 w-16 rounded-full border border-jade/40 bg-jade/10 text-jade">
                 <IconCheck size={30} />
               </span>
-              <h4 className="font-display text-3xl tracking-wide text-cream mt-5">IT'S IN THE PIPELINE</h4>
+              <h4 className="font-display text-3xl text-cream mt-5">سفارش در راه سردابه است</h4>
               <p className="text-sm text-fog mt-2">
-                Order <span className="font-mono text-ember2">{placed.id}</span> confirmed. A receipt is on
-                its way to <span className="text-parch">{placed.email}</span>.
+                سفارش <span className="font-mono text-ember2" dir="ltr">{placed.id}</span> ثبت شد؛ رسید آن به{" "}
+                <span className="text-parch" dir="ltr">{placed.email}</span> ارسال می‌شود.
               </p>
-              <div className="mt-6 border border-line rounded-sm divide-y divide-line text-left">
+              <div className="mt-6 border border-line rounded-sm divide-y divide-line text-start">
                 {placed.items.map((it) => (
                   <div key={it.id} className="flex items-center justify-between px-4 py-3">
-                    <span className="text-sm text-parch">{it.name} <span className="text-ash font-mono text-xs">×{it.qty}</span></span>
-                    <span className="font-mono text-xs text-ember2">{fmt(it.price * it.qty)}</span>
+                    <span className="text-sm text-parch">{it.name} <span className="text-ash text-xs">×{faNum(it.qty)}</span></span>
+                    <span className="text-xs font-bold text-ember2">{fmt(it.price * it.qty)}</span>
                   </div>
                 ))}
                 <div className="flex items-center justify-between px-4 py-3 bg-panel">
-                  <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-fog">Total paid</span>
-                  <span className="font-mono text-sm text-cream">{fmt(placed.total)}</span>
+                  <span className="text-[11px] font-bold text-fog">مبلغ پرداختی</span>
+                  <span className="text-sm font-bold text-cream">{fmt(placed.total)}</span>
                 </div>
               </div>
               <button className="btn-ghost mt-6 w-full" onClick={close}>
-                Keep browsing
+                ادامهٔ خرید
               </button>
             </div>
           )}
         </div>
 
-        {/* footer */}
+        {/* پاصفحه */}
         {step === "cart" && cartLines.length > 0 && (
           <div className="border-t border-line p-5 space-y-3 bg-panel/60">
-            <div className="flex justify-between font-mono text-xs text-fog">
-              <span>Subtotal</span>
-              <span className="text-cream text-sm">{fmt(cartSubtotal)}</span>
+            <div className="flex justify-between text-xs text-fog">
+              <span>جمع سبد</span>
+              <span className="text-cream text-sm font-bold">{fmt(cartSubtotal)}</span>
             </div>
             {cartSubtotal < 150 && (
               <div className="h-1.5 rounded-full bg-line overflow-hidden">
@@ -530,21 +529,21 @@ export function CartDrawer() {
                 />
               </div>
             )}
-            <p className="font-mono text-[10px] text-ash tracking-wide">
-              {cartSubtotal >= 150 ? "FREE SHIPPING UNLOCKED" : `${fmt(150 - cartSubtotal)} away from free shipping`}
+            <p className="text-[11px] text-ash font-semibold">
+              {cartSubtotal >= 150 ? "ارسال رایگان فعال شد" : `${fmt(150 - cartSubtotal)} تا ارسال رایگان`}
             </p>
             <button className="btn-ember w-full" onClick={() => setStep("checkout")}>
-              Checkout <IconArrowRight size={14} />
+              تسویه‌حساب <IconArrowLeft size={14} />
             </button>
           </div>
         )}
         {step === "checkout" && (
           <div className="border-t border-line p-5 flex gap-3 bg-panel/60">
             <button className="btn-ghost flex-1" onClick={() => setStep("cart")}>
-              Back
+              بازگشت
             </button>
             <button className="btn-ember flex-[2]" onClick={submitOrder}>
-              Place order · {fmt(cartSubtotal + shipping)}
+              ثبت سفارش · {fmt(cartSubtotal + shipping)}
             </button>
           </div>
         )}
@@ -554,7 +553,7 @@ export function CartDrawer() {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Age gate                                                           */
+/*  دروازهٔ سنی                                                           */
 /* ------------------------------------------------------------------ */
 
 export function AgeGate() {
@@ -565,7 +564,6 @@ export function AgeGate() {
     setEntering(true);
     window.setTimeout(verifyAge, 450);
   };
-
   if (ageStatus === "ok") return null;
 
   return (
@@ -581,18 +579,18 @@ export function AgeGate() {
             <span className="inline-block text-rust">
               <IconLock size={44} strokeWidth={1.3} />
             </span>
-            <h1 className="font-display text-6xl tracking-wide text-cream mt-5">
-              COME BACK<span className="text-ember"> LATER</span>
+            <h1 className="font-display text-6xl text-cream mt-5 leading-[1.05]">
+              بعداً برگرد<span className="text-ember">ید</span>
             </h1>
             <p className="text-fog text-sm mt-4 leading-relaxed">
-              The lounge is strictly 21 and over. We'll keep the humidor at 69% humidity
-              until you're of age — it isn't going anywhere.
+              سالن ما فقط برای افراد ۱۸ سال به بالاست. هیومیدار را روی رطوبت ۶۹٪ نگه
+              می‌داریم تا وقتی به سن قانونی برسید — جایی نمی‌رود.
             </p>
             <button
               onClick={resetAge}
-              className="mt-8 font-mono text-[11px] tracking-[0.2em] uppercase text-ash underline decoration-line2 underline-offset-4 hover:text-ember transition-colors cursor-pointer"
+              className="mt-8 text-xs font-semibold text-ash underline decoration-line2 underline-offset-4 hover:text-ember transition-colors cursor-pointer"
             >
-              I made a mistake — let me re-enter
+              اشتباه کردم — دوباره وارد شوم
             </button>
           </div>
         ) : (
@@ -600,31 +598,31 @@ export function AgeGate() {
             <span className="inline-block text-ember animate-flicker">
               <IconFlame size={52} strokeWidth={1.2} />
             </span>
-            <h1 className="font-display text-7xl tracking-wide text-cream mt-5 leading-[0.9]">
-              SMOKE<span className="text-ember"> CITY</span>
+            <h1 className="font-display text-7xl text-cream mt-5 leading-[0.95]">
+              اسموک<span className="text-ember"> سیتی</span>
             </h1>
-            <p className="font-mono text-[11px] tracking-[0.3em] uppercase text-copper mt-3">
-              Premium tobacco emporium — est. 2011
+            <p className="font-latin text-[10px] tracking-[0.4em] text-copper mt-3">
+              SMOKE CITY — EST. 2011
             </p>
             <div className="mt-8 border border-line bg-coal/80 backdrop-blur-sm rounded-sm p-7">
-              <p className="font-display text-3xl tracking-wide text-cream">
-                ARE YOU OF LEGAL AGE?
+              <p className="font-display text-3xl text-cream leading-[1.1]">
+                سن قانونی دارید؟
               </p>
-              <p className="text-sm text-fog mt-2">
-                You must be <span className="text-ember font-semibold">21 or older</span> to
-                enter this shop. We verify ID at delivery.
+              <p className="text-sm text-fog mt-2 leading-relaxed">
+                برای ورود به این فروشگاه باید <span className="text-ember font-bold">۱۸ سال یا بیشتر</span> داشته
+                باشید. هنگام تحویل هم مدرک شناسایی کنترل می‌شود.
               </p>
               <div className="mt-6 grid gap-3">
                 <button className="btn-ember w-full" onClick={enter}>
-                  Yes — I'm 21 or older
+                  بله — ۱۸ سال یا بیشتر دارم
                 </button>
                 <button className="btn-ghost w-full" onClick={denyAge}>
-                  No, take me elsewhere
+                  نه، مرا جای دیگری ببرید
                 </button>
               </div>
             </div>
-            <p className="font-mono text-[10px] text-ash mt-5 tracking-[0.16em] uppercase">
-              By entering you agree to our terms. Products contain nicotine — addictive.
+            <p className="text-[11px] text-ash mt-5 font-semibold">
+              با ورود، شرایط ما را می‌پذیرید. محصولات حاوی نیکوتین هستند — ماده‌ای اعتیادآور.
             </p>
           </div>
         )}
@@ -634,7 +632,7 @@ export function AgeGate() {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Product card                                                       */
+/*  کارت محصول                                                           */
 /* ------------------------------------------------------------------ */
 
 export function ProductCard({ product, index = 0 }: { product: Product; index?: number }) {
@@ -659,40 +657,40 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
           />
           <div className="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400" />
           {product.badge && !soldOut && (
-            <span className="absolute top-3 left-3 bg-ember text-[#211507] font-mono text-[9px] font-bold tracking-[0.16em] uppercase px-2 py-1 rounded-sm">
+            <span className="absolute top-3 start-3 bg-ember text-[#211507] text-[10px] font-bold px-2 py-1 rounded-sm">
               {product.badge}
             </span>
           )}
           {low && (
-            <span className="absolute top-3 right-3 border border-rust bg-[#2a140c]/90 text-[#f0b49a] font-mono text-[9px] tracking-[0.16em] uppercase px-2 py-1 rounded-sm">
-              Only {product.stock} left
+            <span className="absolute top-3 end-3 border border-rust bg-[#2a140c]/90 text-[#f0b49a] text-[10px] font-semibold px-2 py-1 rounded-sm">
+              فقط {faNum(product.stock)} عدد
             </span>
           )}
           {soldOut && (
             <span className="absolute inset-0 grid place-items-center">
-              <span className="font-display text-3xl tracking-[0.2em] text-fog border border-line bg-ink/80 px-4 py-1.5">
-                SOLD OUT
+              <span className="font-display text-3xl text-fog border border-line bg-ink/80 px-4 py-1.5">
+                ناموجود
               </span>
             </span>
           )}
         </div>
         <div className="p-4">
           <div className="flex items-center justify-between gap-2">
-            <p className="font-mono text-[9px] tracking-[0.22em] uppercase text-copper">{product.category}</p>
+            <p className="text-[10px] font-bold text-copper">{product.category}</p>
             <Stars rating={product.rating} size={10} />
           </div>
-          <h3 className="font-display text-[22px] leading-tight tracking-wide text-cream mt-1.5 group-hover:text-ember2 transition-colors">
+          <h3 className="font-display text-[21px] leading-tight text-cream mt-1.5 group-hover:text-ember2 transition-colors">
             {product.name}
           </h3>
           <div className="flex items-center justify-between mt-3">
             <div className="flex items-baseline gap-2">
-              <span className="font-mono text-sm text-ember2">{fmt(product.price)}</span>
+              <span className="text-sm font-bold text-ember2">{fmt(product.price)}</span>
               {product.oldPrice && (
-                <span className="font-mono text-[11px] text-ash line-through">{fmt(product.oldPrice)}</span>
+                <span className="text-[11px] text-ash line-through">{fmt(product.oldPrice)}</span>
               )}
             </div>
-            <span className="font-mono text-[9px] tracking-[0.16em] uppercase text-ash">
-              {product.reviews} reviews
+            <span className="text-[10px] font-semibold text-ash">
+              {faNum(product.reviews)} نظر
             </span>
           </div>
         </div>
@@ -700,8 +698,8 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
       <button
         disabled={soldOut}
         onClick={() => addToCart(product.id, 1)}
-        aria-label={`Add ${product.name} to cart`}
-        className="absolute bottom-4 right-4 h-10 w-10 grid place-items-center rounded-sm bg-ember text-[#211507] opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 hover:bg-ember2 active:scale-90 cursor-pointer disabled:opacity-0 disabled:cursor-not-allowed max-md:opacity-100 max-md:translate-y-0"
+        aria-label={`افزودن ${product.name} به سبد`}
+        className="absolute bottom-4 end-4 h-10 w-10 grid place-items-center rounded-sm bg-ember text-[#211507] opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 hover:bg-ember2 active:scale-90 cursor-pointer disabled:opacity-0 disabled:cursor-not-allowed max-md:opacity-100 max-md:translate-y-0"
       >
         <IconPlus size={17} strokeWidth={2.2} />
       </button>
@@ -711,19 +709,19 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
 }
 
 /* ------------------------------------------------------------------ */
-/*  Marquee strip                                                      */
+/*  نوار متحرک دسته‌بندی‌ها                                                 */
 /* ------------------------------------------------------------------ */
 
 export function MarqueeStrip() {
   const items = [
-    "Cigars",
-    "Pipe Tobacco",
-    "Briar Pipes",
-    "Hookah",
-    "Rolling Kits",
-    "Humidors",
-    "Aged In-House",
-    "Free Shipping $150+",
+    "سیگار برگ",
+    "توتون پیپ",
+    "پیپ بریار",
+    "قلیان",
+    "ست پیچ",
+    "هیومیدار",
+    "کهنه‌سازی در محل",
+    "ارسال رایگان بالای ۱۵۰ دلار",
   ];
   const loop = [...items, ...items];
   return (
@@ -731,7 +729,7 @@ export function MarqueeStrip() {
       <div className="flex whitespace-nowrap animate-marquee w-max">
         {loop.map((it, i) => (
           <span key={i} className="flex items-center gap-6 px-6">
-            <span className="font-display text-2xl tracking-[0.12em] text-fog">{it}</span>
+            <span className="font-display text-2xl text-fog">{it}</span>
             <span className="text-copper"><IconFlame size={14} /></span>
           </span>
         ))}
