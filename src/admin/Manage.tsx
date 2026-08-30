@@ -2,11 +2,12 @@ import React, { useMemo, useState } from "react";
 import {
   CATEGORIES,
   Category,
+  faNum,
+  fmt,
+  fmtDate,
   IMAGE_LIBRARY,
   OrderStatus,
   Product,
-  fmt,
-  fmtDate,
   timeAgo,
 } from "../data";
 import { useStore } from "../store";
@@ -17,15 +18,16 @@ import {
   IconSearch,
   IconTrash,
   IconX,
+  STATUS_FA,
 } from "../ui";
 
 /* ------------------------------------------------------------------ */
-/*  Products                                                           */
+/*  مدیریت محصولات                                                        */
 /* ------------------------------------------------------------------ */
 
 const emptyForm = {
   name: "",
-  category: "Cigars" as Category,
+  category: "سیگار برگ" as Category,
   price: "",
   oldPrice: "",
   stock: "",
@@ -52,7 +54,7 @@ export function ProductsAdmin() {
       (p) =>
         p.name.toLowerCase().includes(q) ||
         p.sku.toLowerCase().includes(q) ||
-        p.category.toLowerCase().includes(q)
+        p.category.includes(q)
     );
   }, [products, query]);
 
@@ -64,43 +66,43 @@ export function ProductsAdmin() {
     }
     deleteProduct(p.id);
     setConfirmId(null);
-    toast(`"${p.name}" removed from the shelf`, "warn");
+    toast(`«${p.name}» از قفسه حذف شد`, "warn");
   };
 
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative flex-1 min-w-[220px] max-w-sm">
-          <IconSearch size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5c7183]" />
+          <IconSearch size={15} className="absolute start-3 top-1/2 -translate-y-1/2 text-[#5c7183]" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search name, SKU, category…"
-            className="field !bg-steel !pl-9"
+            placeholder="جست‌وجوی نام، شناسه، دسته…"
+            className="field !bg-steel !ps-9"
           />
         </div>
-        <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-[#5c7183]">
-          {filtered.length} of {products.length} lots
+        <span className="text-[11px] font-bold text-[#5c7183]">
+          {faNum(filtered.length)} از {faNum(products.length)} قلم
         </span>
         <button
-          className="btn-ember !bg-jade hover:!bg-[#b8d6c5] !text-[#0d1a13] ml-auto"
+          className="btn-ember !bg-jade hover:!bg-[#b8d6c5] !text-[#0d1a13] ms-auto"
           onClick={() => setCreating(true)}
         >
-          <IconPlus size={14} strokeWidth={2.4} /> New product
+          <IconPlus size={14} strokeWidth={2.4} /> محصول جدید
         </button>
       </div>
 
       <div className="border border-steelline bg-steel2/80 rounded-sm overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left min-w-[760px]">
+          <table className="w-full text-start min-w-[760px]">
             <thead>
-              <tr className="font-mono text-[10px] tracking-[0.2em] uppercase text-[#5c7183] border-b border-steelline bg-[#0d1319]">
-                <th className="py-3 px-4 font-medium">Product</th>
-                <th className="py-3 px-4 font-medium">Category</th>
-                <th className="py-3 px-4 font-medium">Price</th>
-                <th className="py-3 px-4 font-medium">Stock</th>
-                <th className="py-3 px-4 font-medium">Featured</th>
-                <th className="py-3 px-4 font-medium text-right">Actions</th>
+              <tr className="text-[11px] font-bold text-[#5c7183] border-b border-steelline bg-[#0d1319]">
+                <th className="py-3 px-4 font-bold">محصول</th>
+                <th className="py-3 px-4 font-bold">دسته</th>
+                <th className="py-3 px-4 font-bold">قیمت</th>
+                <th className="py-3 px-4 font-bold">موجودی</th>
+                <th className="py-3 px-4 font-bold">ویژه</th>
+                <th className="py-3 px-4 font-bold text-end">عملیات</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-steelline">
@@ -111,18 +113,18 @@ export function ProductsAdmin() {
                       <img src={p.image} alt="" className="h-11 w-11 object-cover rounded-sm border border-steelline shrink-0" />
                       <div className="min-w-0">
                         <p className="text-sm text-cream truncate max-w-[220px]">{p.name}</p>
-                        <p className="font-mono text-[10px] text-[#5c7183]">{p.sku}</p>
+                        <p className="font-mono text-[10px] text-[#5c7183]" dir="ltr">{p.sku}</p>
                       </div>
                     </div>
                   </td>
-                  <td className="py-3 px-4 font-mono text-xs text-[#7f93a6]">{p.category}</td>
-                  <td className="py-3 px-4 font-mono text-xs text-cream">
+                  <td className="py-3 px-4 text-xs text-[#7f93a6]">{p.category}</td>
+                  <td className="py-3 px-4 text-xs font-bold text-cream">
                     {fmt(p.price)}
-                    {p.oldPrice && <span className="text-[#5c7183] line-through ml-1.5">{fmt(p.oldPrice)}</span>}
+                    {p.oldPrice && <span className="text-[#5c7183] line-through ms-1.5">{fmt(p.oldPrice)}</span>}
                   </td>
                   <td className="py-3 px-4">
                     <span
-                      className={`font-mono text-xs px-2 py-1 rounded-sm border ${
+                      className={`text-xs font-bold px-2 py-1 rounded-sm border ${
                         p.stock === 0
                           ? "text-[#e8927c] border-[#e8927c]/40 bg-[#e8927c]/10"
                           : p.stock <= 5
@@ -130,22 +132,22 @@ export function ProductsAdmin() {
                           : "text-jade border-jade/40 bg-jade/10"
                       }`}
                     >
-                      {p.stock === 0 ? "OUT" : p.stock}
+                      {p.stock === 0 ? "تمام" : faNum(p.stock)}
                     </span>
                   </td>
                   <td className="py-3 px-4">
                     <button
                       onClick={() => {
                         saveProduct({ ...p, featured: !p.featured });
-                        toast(p.featured ? "Removed from house favourites" : "Added to house favourites", "info");
+                        toast(p.featured ? "از علاقه‌مندی‌های خانه حذف شد" : "به علاقه‌مندی‌های خانه اضافه شد", "info");
                       }}
-                      className={`font-mono text-[10px] tracking-[0.14em] uppercase px-2.5 py-1.5 rounded-sm border transition-colors cursor-pointer ${
+                      className={`text-[11px] font-bold px-2.5 py-1.5 rounded-sm border transition-colors cursor-pointer ${
                         p.featured
                           ? "text-jade border-jade/40 bg-jade/10 hover:bg-jade/20"
                           : "text-[#7f93a6] border-steelline hover:border-jade/40 hover:text-jade"
                       }`}
                     >
-                      {p.featured ? "ON" : "OFF"}
+                      {p.featured ? "فعال" : "غیرفعال"}
                     </button>
                   </td>
                   <td className="py-3 px-4">
@@ -153,7 +155,7 @@ export function ProductsAdmin() {
                       <button
                         onClick={() => setEditing(p)}
                         className="h-8 w-8 grid place-items-center rounded-sm border border-steelline text-[#7f93a6] hover:text-jade hover:border-jade/50 transition-colors cursor-pointer"
-                        aria-label={`Edit ${p.name}`}
+                        aria-label={`ویرایش ${p.name}`}
                       >
                         <IconPencil size={14} />
                       </button>
@@ -161,12 +163,12 @@ export function ProductsAdmin() {
                         onClick={() => remove(p)}
                         className={`h-8 grid place-items-center rounded-sm border transition-all cursor-pointer ${
                           confirmId === p.id
-                            ? "w-auto px-3 border-[#e8927c] bg-[#e8927c]/15 text-[#e8927c] font-mono text-[10px] tracking-wide"
+                            ? "w-auto px-3 border-[#e8927c] bg-[#e8927c]/15 text-[#e8927c] text-[11px] font-bold"
                             : "w-8 border-steelline text-[#7f93a6] hover:text-[#e8927c] hover:border-[#e8927c]/50"
                         }`}
-                        aria-label={`Delete ${p.name}`}
+                        aria-label={`حذف ${p.name}`}
                       >
-                        {confirmId === p.id ? "Sure?" : <IconTrash size={14} />}
+                        {confirmId === p.id ? "مطمئنی؟" : <IconTrash size={14} />}
                       </button>
                     </div>
                   </td>
@@ -176,7 +178,7 @@ export function ProductsAdmin() {
                 <tr>
                   <td colSpan={6} className="py-14 text-center">
                     <span className="inline-block text-[#26303a]"><IconBox size={40} strokeWidth={1.2} /></span>
-                    <p className="font-mono text-xs text-[#5c7183] mt-3">No lots match that search.</p>
+                    <p className="text-xs text-[#5c7183] mt-3 font-semibold">هیچ قلمی با این جست‌وجو جور درنیامد.</p>
                   </td>
                 </tr>
               )}
@@ -198,7 +200,7 @@ export function ProductsAdmin() {
   );
 }
 
-/* ---------------- modal editor ---------------- */
+/* ---------------- مودال ویرایش محصول ---------------- */
 
 function ProductModal({ product, onClose }: { product: Product | null; onClose: () => void }) {
   const { saveProduct, toast } = useStore();
@@ -214,7 +216,7 @@ function ProductModal({ product, onClose }: { product: Product | null; onClose: 
           origin: product.origin,
           badge: product.badge ?? "",
           description: product.description,
-          notes: product.notes.join(", "),
+          notes: product.notes.join("، "),
           image: product.image,
           featured: Boolean(product.featured),
         }
@@ -235,7 +237,7 @@ function ProductModal({ product, onClose }: { product: Product | null; onClose: 
     };
     setErrors(errs);
     if (Object.values(errs).some(Boolean)) {
-      toast("Fix the highlighted fields before saving", "warn");
+      toast("قبل از ذخیره، فیلدهای قرمز را درست کنید", "warn");
       return;
     }
     const id = product?.id ?? "p-" + Math.random().toString(36).slice(2, 8);
@@ -247,20 +249,20 @@ function ProductModal({ product, onClose }: { product: Product | null; onClose: 
       oldPrice: form.oldPrice ? Number(form.oldPrice) : undefined,
       stock: Math.floor(Number(form.stock)),
       sku: form.sku.trim() || "SC-NEW-" + id.slice(2, 5).toUpperCase(),
-      origin: form.origin.trim() || "Unknown",
+      origin: form.origin.trim() || "نامشخص",
       rating: product?.rating ?? 4.5,
       reviews: product?.reviews ?? 0,
-      description: form.description.trim() || "A fresh arrival in the cellar — full tasting notes coming soon.",
-      notes: form.notes.split(",").map((n) => n.trim()).filter(Boolean),
+      description: form.description.trim() || "تازه‌واردِ سردابه — نوت‌های کامل چشایی به‌زودی.",
+      notes: form.notes.split(/[,،]/).map((n) => n.trim()).filter(Boolean),
       image: form.image.trim(),
       featured: form.featured,
       badge: form.badge.trim() || undefined,
     });
-    toast(product ? "Product updated" : "Product added to the shelf", "ok");
+    toast(product ? "محصول به‌روزرسانی شد" : "محصول به قفسه اضافه شد", "ok");
     onClose();
   };
 
-  const label = "font-mono text-[10px] tracking-[0.2em] uppercase text-[#7f93a6]";
+  const label = "text-[11px] font-bold text-[#7f93a6]";
 
   return (
     <div className="fixed inset-0 z-[85] grid place-items-center p-4 overflow-y-auto">
@@ -270,63 +272,63 @@ function ProductModal({ product, onClose }: { product: Product | null; onClose: 
         className="relative w-full max-w-2xl border border-steelline bg-steel2 rounded-sm my-8 animate-rise max-h-[90vh] overflow-y-auto"
       >
         <div className="sticky top-0 flex items-center justify-between px-6 py-4 border-b border-steelline bg-steel2 z-10">
-          <h3 className="font-display text-2xl tracking-wide text-cream">
-            {product ? "EDIT LOT" : "NEW LOT"}
+          <h3 className="font-display text-2xl text-cream">
+            {product ? "ویرایش محصول" : "محصول جدید"}
           </h3>
-          <button type="button" onClick={onClose} className="text-[#7f93a6] hover:text-cream transition-colors cursor-pointer" aria-label="Close editor">
+          <button type="button" onClick={onClose} className="text-[#7f93a6] hover:text-cream transition-colors cursor-pointer" aria-label="بستن ویرایشگر">
             <IconX size={20} />
           </button>
         </div>
 
         <div className="p-6 grid sm:grid-cols-2 gap-4">
           <div className="sm:col-span-2">
-            <label className={label}>Name</label>
-            <input className={`field mt-1.5 !bg-steel ${errors.name ? "field-error" : ""}`} value={form.name} onChange={(e) => set("name", e.target.value)} placeholder="Habana Reserva No. 5" />
+            <label className={label}>نام محصول</label>
+            <input className={`field mt-1.5 !bg-steel ${errors.name ? "field-error" : ""}`} value={form.name} onChange={(e) => set("name", e.target.value)} placeholder="مثلاً هوانا رزروا شمارهٔ ۵" />
           </div>
 
           <div>
-            <label className={label}>Category</label>
+            <label className={label}>دسته‌بندی</label>
             <select className="field mt-1.5 !bg-steel cursor-pointer" value={form.category} onChange={(e) => set("category", e.target.value as Category)}>
               {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
             </select>
           </div>
           <div>
-            <label className={label}>Origin</label>
-            <input className="field mt-1.5 !bg-steel" value={form.origin} onChange={(e) => set("origin", e.target.value)} placeholder="Havana, Cuba" />
+            <label className={label}>خاستگاه</label>
+            <input className="field mt-1.5 !bg-steel" value={form.origin} onChange={(e) => set("origin", e.target.value)} placeholder="هاوانا، کوبا" />
           </div>
 
           <div>
-            <label className={label}>Price ($)</label>
-            <input className={`field mt-1.5 !bg-steel ${errors.price ? "field-error" : ""}`} type="number" min="0" step="0.01" value={form.price} onChange={(e) => set("price", e.target.value)} placeholder="148" />
+            <label className={label}>قیمت (دلار)</label>
+            <input className={`field mt-1.5 !bg-steel ${errors.price ? "field-error" : ""}`} type="number" min="0" step="0.01" value={form.price} onChange={(e) => set("price", e.target.value)} placeholder="148" dir="ltr" />
           </div>
           <div>
-            <label className={label}>Old price — optional</label>
-            <input className="field mt-1.5 !bg-steel" type="number" min="0" step="0.01" value={form.oldPrice} onChange={(e) => set("oldPrice", e.target.value)} placeholder="164" />
-          </div>
-
-          <div>
-            <label className={label}>Stock</label>
-            <input className={`field mt-1.5 !bg-steel ${errors.stock ? "field-error" : ""}`} type="number" min="0" value={form.stock} onChange={(e) => set("stock", e.target.value)} placeholder="14" />
-          </div>
-          <div>
-            <label className={label}>SKU</label>
-            <input className="field mt-1.5 !bg-steel" value={form.sku} onChange={(e) => set("sku", e.target.value)} placeholder="SC-CIG-005" />
+            <label className={label}>قیمت قبلی — اختیاری</label>
+            <input className="field mt-1.5 !bg-steel" type="number" min="0" step="0.01" value={form.oldPrice} onChange={(e) => set("oldPrice", e.target.value)} placeholder="164" dir="ltr" />
           </div>
 
           <div>
-            <label className={label}>Badge — optional</label>
-            <input className="field mt-1.5 !bg-steel" value={form.badge} onChange={(e) => set("badge", e.target.value)} placeholder="Best Seller" />
+            <label className={label}>موجودی</label>
+            <input className={`field mt-1.5 !bg-steel ${errors.stock ? "field-error" : ""}`} type="number" min="0" value={form.stock} onChange={(e) => set("stock", e.target.value)} placeholder="14" dir="ltr" />
+          </div>
+          <div>
+            <label className={label}>شناسه (SKU)</label>
+            <input className="field mt-1.5 !bg-steel" value={form.sku} onChange={(e) => set("sku", e.target.value)} placeholder="SC-CIG-005" dir="ltr" />
+          </div>
+
+          <div>
+            <label className={label}>نشان — اختیاری</label>
+            <input className="field mt-1.5 !bg-steel" value={form.badge} onChange={(e) => set("badge", e.target.value)} placeholder="پرفروش" />
           </div>
           <div className="flex items-end pb-1">
             <label className="flex items-center gap-2.5 cursor-pointer select-none">
               <input type="checkbox" checked={form.featured} onChange={(e) => set("featured", e.target.checked)} className="accent-[#9cc4ad] h-4 w-4" />
-              <span className={label}>Featured on home page</span>
+              <span className={label}>نمایش در صفحهٔ اصلی</span>
             </label>
           </div>
 
           <div className="sm:col-span-2">
-            <label className={label}>Image</label>
-            <input className={`field mt-1.5 !bg-steel ${errors.image ? "field-error" : ""}`} value={form.image} onChange={(e) => set("image", e.target.value)} placeholder="https://…" />
+            <label className={label}>تصویر</label>
+            <input className={`field mt-1.5 !bg-steel ${errors.image ? "field-error" : ""}`} value={form.image} onChange={(e) => set("image", e.target.value)} placeholder="https://…" dir="ltr" />
             <div className="flex flex-wrap gap-2 mt-2.5">
               {IMAGE_LIBRARY.map((img) => (
                 <button
@@ -345,20 +347,20 @@ function ProductModal({ product, onClose }: { product: Product | null; onClose: 
           </div>
 
           <div className="sm:col-span-2">
-            <label className={label}>Description</label>
-            <textarea className="field mt-1.5 !bg-steel min-h-[90px] resize-none" value={form.description} onChange={(e) => set("description", e.target.value)} placeholder="Tasting notes, provenance, why it earned shelf space…" />
+            <label className={label}>توضیحات</label>
+            <textarea className="field mt-1.5 !bg-steel min-h-[90px] resize-none" value={form.description} onChange={(e) => set("description", e.target.value)} placeholder="نوت‌های چشایی، خاستگاه، چرا لیاقت قفسه را دارد…" />
           </div>
 
           <div className="sm:col-span-2">
-            <label className={label}>Notes — comma separated</label>
-            <input className="field mt-1.5 !bg-steel" value={form.notes} onChange={(e) => set("notes", e.target.value)} placeholder="Cedar, Dark cocoa, Espresso" />
+            <label className={label}>نوت‌ها — با ویرگول جدا کنید</label>
+            <input className="field mt-1.5 !bg-steel" value={form.notes} onChange={(e) => set("notes", e.target.value)} placeholder="سدر، کاکائوی تلخ، اسپرسو" />
           </div>
         </div>
 
         <div className="sticky bottom-0 flex gap-3 px-6 py-4 border-t border-steelline bg-steel2">
-          <button type="button" className="btn-ghost flex-1" onClick={onClose}>Cancel</button>
+          <button type="button" className="btn-ghost flex-1" onClick={onClose}>انصراف</button>
           <button type="submit" className="btn-ember flex-[2] !bg-jade hover:!bg-[#b8d6c5] !text-[#0d1a13]">
-            {product ? "Save changes" : "Add to shelf"}
+            {product ? "ذخیرهٔ تغییرات" : "افزودن به قفسه"}
           </button>
         </div>
       </form>
@@ -367,7 +369,7 @@ function ProductModal({ product, onClose }: { product: Product | null; onClose: 
 }
 
 /* ------------------------------------------------------------------ */
-/*  Orders                                                             */
+/*  مدیریت سفارش‌ها                                                       */
 /* ------------------------------------------------------------------ */
 
 export function OrdersAdmin() {
@@ -395,20 +397,20 @@ export function OrdersAdmin() {
           <button
             key={s}
             onClick={() => setFilter(s)}
-            className={`px-3.5 py-2 rounded-sm font-mono text-[11px] tracking-[0.12em] uppercase border transition-all cursor-pointer ${
+            className={`px-3.5 py-2 rounded-sm text-xs font-bold border transition-all cursor-pointer ${
               filter === s
-                ? "bg-jade text-[#0d1a13] border-jade font-semibold"
+                ? "bg-jade text-[#0d1a13] border-jade"
                 : "border-steelline text-[#7f93a6] hover:border-jade/50 hover:text-jade"
             }`}
           >
-            {s} <span className="opacity-70">{counts[s]}</span>
+            {s === "all" ? "همه" : STATUS_FA[s]} <span className="opacity-70">{faNum(counts[s])}</span>
           </button>
         ))}
       </div>
 
       {filtered.length === 0 ? (
         <div className="border border-steelline bg-steel2/80 rounded-sm py-20 text-center">
-          <p className="font-mono text-xs text-[#5c7183]">No orders in this state. The ledger is quiet.</p>
+          <p className="text-xs font-semibold text-[#5c7183]">در این وضعیت سفارشی نیست. دفتر حساب ساکت است.</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -418,22 +420,23 @@ export function OrdersAdmin() {
                 <button
                   onClick={() => setExpanded((e) => (e === o.id ? null : o.id))}
                   className="font-mono text-xs text-jade hover:underline cursor-pointer"
+                  dir="ltr"
                 >
                   {o.id}
                 </button>
                 <div className="min-w-0">
                   <p className="text-sm text-cream">{o.customer}</p>
-                  <p className="font-mono text-[10px] text-[#5c7183]">{o.email}</p>
+                  <p className="font-mono text-[10px] text-[#5c7183]" dir="ltr">{o.email}</p>
                 </div>
-                <span className="font-mono text-[10px] text-[#7f93a6] ml-auto">{fmtDate(o.date)} · {timeAgo(o.date)}</span>
-                <span className="font-mono text-sm text-cream">{fmt(o.total)}</span>
+                <span className="text-[11px] text-[#7f93a6] ms-auto font-semibold">{fmtDate(o.date)} · {timeAgo(o.date)}</span>
+                <span className="text-sm font-bold text-cream">{fmt(o.total)}</span>
                 <select
                   value={o.status}
                   onChange={(e) => {
                     updateOrderStatus(o.id, e.target.value as OrderStatus);
-                    toast(`${o.id} marked ${e.target.value}`, "info");
+                    toast(`${o.id} به وضعیت «${STATUS_FA[e.target.value]}» تغییر کرد`, "info");
                   }}
-                  className={`field !w-auto !py-1.5 !px-3 font-mono text-[11px] uppercase tracking-wider cursor-pointer !bg-steel ${
+                  className={`field !w-auto !py-1.5 !px-3 text-xs font-bold cursor-pointer !bg-steel ${
                     o.status === "pending"
                       ? "!border-ember/50 text-ember"
                       : o.status === "shipped"
@@ -442,10 +445,10 @@ export function OrdersAdmin() {
                       ? "!border-jade/50 text-jade"
                       : "!border-[#d98a7a]/50 text-[#d98a7a]"
                   }`}
-                  aria-label={`Status of order ${o.id}`}
+                  aria-label={`وضعیت سفارش ${o.id}`}
                 >
                   {(["pending", "shipped", "delivered", "cancelled"] as OrderStatus[]).map((s) => (
-                    <option key={s} value={s}>{s}</option>
+                    <option key={s} value={s}>{STATUS_FA[s]}</option>
                   ))}
                 </select>
               </div>
@@ -459,17 +462,17 @@ export function OrdersAdmin() {
                         <li key={it.id} className="flex items-center gap-3">
                           <img src={it.image} alt="" className="h-10 w-10 object-cover rounded-sm border border-steelline" />
                           <span className="text-sm text-cream flex-1">
-                            {it.name} <span className="font-mono text-[10px] text-[#5c7183]">×{it.qty}</span>
+                            {it.name} <span className="text-[10px] text-[#5c7183]">×{faNum(it.qty)}</span>
                           </span>
-                          <span className="font-mono text-xs text-[#7f93a6]">{fmt(it.price * it.qty)}</span>
+                          <span className="text-xs font-bold text-[#7f93a6]">{fmt(it.price * it.qty)}</span>
                         </li>
                       ))}
                     </ul>
-                    <div className="font-mono text-xs text-[#7f93a6] space-y-1.5 md:text-right self-start border border-steelline rounded-sm p-4 min-w-[220px]">
-                      <p className="text-[#7f93a6]">Ship to:</p>
-                      <p className="text-cream normal-case">{o.address}</p>
+                    <div className="text-xs text-[#7f93a6] space-y-1.5 self-start border border-steelline rounded-sm p-4 min-w-[220px]">
+                      <p className="font-bold">ارسال به:</p>
+                      <p className="text-cream leading-relaxed">{o.address}</p>
                       <p className="pt-2 border-t border-steelline">
-                        Subtotal {fmt(o.subtotal)} · Shipping {o.shipping === 0 ? "free" : fmt(o.shipping)}
+                        جمع جزء {fmt(o.subtotal)} · ارسال {o.shipping === 0 ? "رایگان" : fmt(o.shipping)}
                       </p>
                     </div>
                   </div>

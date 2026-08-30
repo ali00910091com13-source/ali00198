@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useStore } from "./store";
+import { faNum } from "./data";
 
 /* ------------------------------------------------------------------ */
-/*  Icons — all inline SVG                                             */
+/*  آیکون‌ها — همه SVG درون‌خطی                                          */
 /* ------------------------------------------------------------------ */
 
 type IconProps = { size?: number; className?: string; strokeWidth?: number };
@@ -236,7 +237,7 @@ export function Reveal({
 }
 
 /* ------------------------------------------------------------------ */
-/*  Star rating                                                        */
+/*  امتیاز ستاره‌ای                                                      */
 /* ------------------------------------------------------------------ */
 
 export function Stars({ rating, size = 12 }: { rating: number; size?: number }) {
@@ -256,12 +257,12 @@ export function Stars({ rating, size = 12 }: { rating: number; size?: number }) 
 export function ToastViewport() {
   const { toasts, dismissToast } = useStore();
   return (
-    <div className="fixed bottom-5 right-5 z-[90] flex flex-col gap-2 pointer-events-none">
+    <div className="fixed bottom-6 start-6 z-[90] flex flex-col gap-2 pointer-events-none">
       {toasts.map((t) => (
         <button
           key={t.id}
           onClick={() => dismissToast(t.id)}
-          className={`pointer-events-auto flex items-center gap-2.5 rounded-sm border px-4 py-3 text-left font-mono text-xs tracking-wide shadow-[0_18px_40px_-12px_rgba(0,0,0,0.7)] backdrop-blur-sm transition-transform hover:translate-x-[-2px] animate-rise cursor-pointer ${
+          className={`pointer-events-auto flex items-center gap-2.5 rounded-sm border px-4 py-3 text-start text-sm shadow-[0_18px_40px_-12px_rgba(0,0,0,0.7)] backdrop-blur-sm transition-transform hover:-translate-y-0.5 animate-rise cursor-pointer ${
             t.kind === "ok"
               ? "border-ember/40 bg-[#241a0e]/95 text-ember2"
               : t.kind === "warn"
@@ -278,7 +279,7 @@ export function ToastViewport() {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Small bits                                                         */
+/*  قطعه‌های کوچک                                                        */
 /* ------------------------------------------------------------------ */
 
 export function SectionHeading({
@@ -293,11 +294,11 @@ export function SectionHeading({
   return (
     <div className="flex items-end justify-between gap-6 flex-wrap">
       <div>
-        <p className="font-mono text-[11px] tracking-[0.28em] uppercase text-copper flex items-center gap-2">
+        <p className="text-xs font-bold text-copper flex items-center gap-2">
           <span className="inline-block h-px w-8 bg-copper" />
           {kicker}
         </p>
-        <h2 className="font-display text-4xl md:text-5xl leading-[0.95] tracking-wide mt-3 text-cream">
+        <h2 className="font-display text-4xl md:text-5xl leading-[1.05] mt-3 text-cream">
           {title}
         </h2>
       </div>
@@ -321,19 +322,19 @@ export function QtyStepper({
     compact ? "h-7 w-7" : "h-10 w-10"
   }`;
   return (
-    <div className="inline-flex items-stretch">
-      <button aria-label="Decrease quantity" className={`${btn} rounded-l-sm`} onClick={() => setQty(qty - 1)}>
+    <div className="inline-flex items-stretch" dir="ltr">
+      <button aria-label="کاهش تعداد" className={`${btn} rounded-l-sm`} onClick={() => setQty(qty - 1)}>
         <IconMinus size={compact ? 12 : 14} />
       </button>
       <span
         className={`${
           compact ? "h-7 min-w-8 px-1 text-xs" : "h-10 min-w-12 px-2 text-sm"
-        } grid place-items-center border-y border-line2 font-mono text-cream bg-panel`}
+        } grid place-items-center border-y border-line2 font-bold text-cream bg-panel`}
       >
-        {Math.max(1, Math.min(qty, max))}
+        {faNum(Math.max(1, Math.min(qty, max)))}
       </span>
       <button
-        aria-label="Increase quantity"
+        aria-label="افزایش تعداد"
         className={`${btn} rounded-r-sm`}
         onClick={() => setQty(Math.min(qty + 1, max))}
       >
@@ -342,6 +343,13 @@ export function QtyStepper({
     </div>
   );
 }
+
+export const STATUS_FA: Record<string, string> = {
+  pending: "در انتظار",
+  shipped: "ارسال شد",
+  delivered: "تحویل شد",
+  cancelled: "لغو شد",
+};
 
 export function StatusPill({ status }: { status: string }) {
   const map: Record<string, string> = {
@@ -352,12 +360,12 @@ export function StatusPill({ status }: { status: string }) {
   };
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-sm border px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] ${
+      className={`inline-flex items-center gap-1.5 rounded-sm border px-2 py-0.5 text-[11px] font-semibold ${
         map[status] ?? "text-fog border-line"
       }`}
     >
       <span className="h-1 w-1 rounded-full bg-current" />
-      {status}
+      {STATUS_FA[status] ?? status}
     </span>
   );
 }

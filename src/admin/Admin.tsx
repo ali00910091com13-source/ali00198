@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis } from "recharts";
-import { fmt, timeAgo } from "../data";
+import { faNum, fmt, timeAgo } from "../data";
 import { useStore } from "../store";
 import {
   IconBox,
@@ -15,7 +15,7 @@ import {
 } from "../ui";
 
 /* ------------------------------------------------------------------ */
-/*  Guard                                                              */
+/*  محافظ ورود                                                            */
 /* ------------------------------------------------------------------ */
 
 export function AdminRoot() {
@@ -24,7 +24,7 @@ export function AdminRoot() {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Login                                                              */
+/*  صفحهٔ ورود                                                            */
 /* ------------------------------------------------------------------ */
 
 function AdminLogin() {
@@ -47,7 +47,7 @@ function AdminLogin() {
         setShaking(true);
         window.setTimeout(() => setShaking(false), 450);
       } else {
-        toast("Back office unlocked — welcome back", "ok");
+        toast("پنل مدیریت باز شد — خوش برگشتید", "ok");
       }
     }, 550);
   };
@@ -65,42 +65,44 @@ function AdminLogin() {
         <div className="flex items-center justify-center">
           <span className="text-jade"><IconLock size={30} strokeWidth={1.4} /></span>
         </div>
-        <p className="text-center font-mono text-[10px] tracking-[0.34em] uppercase text-jade mt-3">
-          Smoke City · Back Office
+        <p className="text-center font-latin text-[10px] tracking-[0.34em] text-jade mt-3">
+          SMOKE CITY · BACK OFFICE
         </p>
-        <h1 className="text-center font-display text-5xl tracking-wide text-cream mt-2">
-          STAFF ENTRANCE
+        <h1 className="text-center font-display text-5xl text-cream mt-2 leading-[1.05]">
+          ورود کارکنان
         </h1>
 
         <form onSubmit={submit} className="mt-8 border border-steelline bg-steel2/90 backdrop-blur-sm rounded-sm p-7 space-y-4">
           <div>
-            <label className="font-mono text-[10px] tracking-[0.22em] uppercase text-[#7f93a6]">Username</label>
+            <label className="text-[11px] font-bold text-[#7f93a6]">نام کاربری</label>
             <input
               className={`field mt-1.5 !bg-steel ${error ? "field-error" : ""}`}
               value={username}
               onChange={(e) => { setUsername(e.target.value); setError(false); }}
               placeholder="admin"
               autoComplete="username"
+              dir="ltr"
             />
           </div>
           <div>
-            <label className="font-mono text-[10px] tracking-[0.22em] uppercase text-[#7f93a6]">Password</label>
+            <label className="text-[11px] font-bold text-[#7f93a6]">رمز عبور</label>
             <div className="relative">
               <input
-                className={`field mt-1.5 !bg-steel !pr-10 ${error ? "field-error" : ""}`}
+                className={`field mt-1.5 !bg-steel !pe-10 ${error ? "field-error" : ""}`}
                 value={password}
                 onChange={(e) => { setPassword(e.target.value); setError(false); }}
                 type={showPw ? "text" : "password"}
                 placeholder="••••••••"
                 autoComplete="current-password"
+                dir="ltr"
               />
               <button
                 type="button"
                 onClick={() => setShowPw((v) => !v)}
-                className={`absolute right-3 top-[calc(50%+3px)] -translate-y-1/2 cursor-pointer transition-colors ${
+                className={`absolute end-3 top-[calc(50%+3px)] -translate-y-1/2 cursor-pointer transition-colors ${
                   showPw ? "text-jade" : "text-[#5c7183] hover:text-jade"
                 }`}
-                aria-label="Toggle password visibility"
+                aria-label="نمایش یا پنهان‌کردن رمز"
               >
                 <IconEye size={16} off={!showPw} />
               </button>
@@ -108,29 +110,29 @@ function AdminLogin() {
           </div>
 
           {error && (
-            <p className="font-mono text-[11px] text-[#e8927c] border border-[#e8927c]/30 bg-[#e8927c]/10 rounded-sm px-3 py-2">
-              Wrong credentials. The door stays shut.
+            <p className="text-xs text-[#e8927c] border border-[#e8927c]/30 bg-[#e8927c]/10 rounded-sm px-3 py-2 font-semibold">
+              نام کاربری یا رمز عبور اشتباه است. در بسته می‌ماند.
             </p>
           )}
 
           <button className="btn-ember w-full !bg-jade hover:!bg-[#b8d6c5] !text-[#0d1a13]" disabled={checking}>
-            {checking ? "Checking…" : "Unlock back office"}
+            {checking ? "در حال بررسی…" : "ورود به پنل"}
           </button>
 
           <div className="border border-dashed border-steelline rounded-sm px-4 py-3">
-            <p className="font-mono text-[10px] text-[#7f93a6] leading-relaxed">
-              <span className="text-jade">DEMO ACCESS</span> — user:{" "}
-              <code className="text-cream">admin</code> · pass:{" "}
-              <code className="text-cream">ember2024</code>
+            <p className="text-[11px] text-[#7f93a6] leading-relaxed">
+              <span className="text-jade font-bold">دسترسی آزمایشی</span> — کاربر:{" "}
+              <code className="text-cream font-mono" dir="ltr">admin</code> · رمز:{" "}
+              <code className="text-cream font-mono" dir="ltr">ember2024</code>
             </p>
           </div>
         </form>
 
         <Link
           to="/"
-          className="block text-center mt-6 font-mono text-[10px] tracking-[0.24em] uppercase text-[#5c7183] hover:text-jade transition-colors"
+          className="block text-center mt-6 text-[11px] font-semibold text-[#5c7183] hover:text-jade transition-colors"
         >
-          ← Back to the storefront
+          بازگشت به فروشگاه →
         </Link>
       </div>
     </div>
@@ -138,7 +140,7 @@ function AdminLogin() {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Shell                                                              */
+/*  پوستهٔ پنل                                                            */
 /* ------------------------------------------------------------------ */
 
 function AdminShell() {
@@ -147,27 +149,29 @@ function AdminShell() {
   const location = useLocation();
 
   const title = location.pathname.startsWith("/admin/products")
-    ? "Products"
+    ? "محصولات"
     : location.pathname.startsWith("/admin/orders")
-    ? "Orders"
-    : "Overview";
+    ? "سفارش‌ها"
+    : "پیشخوان";
 
   const items = [
-    { to: "/admin", end: true, label: "Overview", icon: <IconChart size={17} /> },
-    { to: "/admin/products", end: false, label: "Products", icon: <IconBox size={17} /> },
-    { to: "/admin/orders", end: false, label: "Orders", icon: <IconReceipt size={17} /> },
+    { to: "/admin", end: true, label: "پیشخوان", icon: <IconChart size={17} /> },
+    { to: "/admin/products", end: false, label: "محصولات", icon: <IconBox size={17} /> },
+    { to: "/admin/orders", end: false, label: "سفارش‌ها", icon: <IconReceipt size={17} /> },
   ];
 
   return (
     <div className="min-h-screen bg-steel text-cream flex relative">
-      {/* sidebar */}
-      <aside className="w-16 md:w-60 shrink-0 border-r border-steelline bg-[#0b1014] flex flex-col sticky top-0 h-screen z-30">
+      {/* سایدبار */}
+      <aside className="w-16 md:w-60 shrink-0 border-e border-steelline bg-[#0b1014] flex flex-col sticky top-0 h-screen z-30">
         <div className="flex items-center gap-2.5 px-4 md:px-6 h-[68px] border-b border-steelline">
           <span className="text-jade"><IconFlame size={22} /></span>
-          <span className="hidden md:block font-display text-xl tracking-wide leading-none">
-            SMOKE<span className="text-jade"> CITY</span>
-            <span className="block font-mono text-[8px] tracking-[0.3em] uppercase text-[#5c7183] mt-1">
-              Back office
+          <span className="hidden md:block leading-none">
+            <span className="block font-display text-xl leading-none">
+              اسموک<span className="text-jade"> سیتی</span>
+            </span>
+            <span className="block font-latin text-[8px] tracking-[0.3em] text-[#5c7183] mt-1.5">
+              BACK OFFICE
             </span>
           </span>
         </div>
@@ -178,7 +182,7 @@ function AdminShell() {
               to={it.to}
               end={it.end}
               className={({ isActive }) =>
-                `flex items-center justify-center md:justify-start gap-3 px-3 py-3 rounded-sm font-mono text-xs tracking-[0.14em] uppercase transition-all duration-200 ${
+                `flex items-center justify-center md:justify-start gap-3 px-3 py-3 rounded-sm text-sm font-semibold transition-all duration-200 ${
                   isActive
                     ? "bg-jade/10 text-jade border border-jade/30"
                     : "text-[#7f93a6] hover:text-cream hover:bg-white/5 border border-transparent"
@@ -193,38 +197,38 @@ function AdminShell() {
         <div className="p-2 md:p-3 border-t border-steelline space-y-1">
           <Link
             to="/"
-            className="flex items-center justify-center md:justify-start gap-3 px-3 py-3 rounded-sm font-mono text-xs tracking-[0.14em] uppercase text-[#7f93a6] hover:text-cream hover:bg-white/5 transition-colors"
+            className="flex items-center justify-center md:justify-start gap-3 px-3 py-3 rounded-sm text-sm font-semibold text-[#7f93a6] hover:text-cream hover:bg-white/5 transition-colors"
           >
             <IconEye size={17} />
-            <span className="hidden md:inline">View store</span>
+            <span className="hidden md:inline">مشاهدهٔ فروشگاه</span>
           </Link>
           <button
             onClick={() => {
               logout();
-              toast("Locked the back office", "info");
+              toast("پنل مدیریت قفل شد", "info");
               navigate("/");
             }}
-            className="w-full flex items-center justify-center md:justify-start gap-3 px-3 py-3 rounded-sm font-mono text-xs tracking-[0.14em] uppercase text-[#e8927c]/80 hover:text-[#e8927c] hover:bg-[#e8927c]/10 transition-colors cursor-pointer"
+            className="w-full flex items-center justify-center md:justify-start gap-3 px-3 py-3 rounded-sm text-sm font-semibold text-[#e8927c]/80 hover:text-[#e8927c] hover:bg-[#e8927c]/10 transition-colors cursor-pointer"
           >
             <IconLogout size={17} />
-            <span className="hidden md:inline">Sign out</span>
+            <span className="hidden md:inline">خروج</span>
           </button>
         </div>
       </aside>
 
-      {/* main */}
+      {/* بخش اصلی */}
       <div className="flex-1 min-w-0 relative">
         <div className="absolute inset-0 grid-blueprint pointer-events-none" />
         <header className="sticky top-0 z-20 h-[68px] border-b border-steelline bg-steel/85 backdrop-blur-md flex items-center justify-between px-5 md:px-8">
           <div>
-            <p className="font-mono text-[10px] tracking-[0.28em] uppercase text-[#5c7183]">
-              {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
+            <p className="text-[10px] font-semibold text-[#5c7183]">
+              {new Date().toLocaleDateString("fa-IR", { weekday: "long", month: "long", day: "numeric" })}
             </p>
-            <h1 className="font-display text-2xl tracking-wide leading-none mt-0.5">{title}</h1>
+            <h1 className="font-display text-2xl leading-none mt-0.5">{title}</h1>
           </div>
           <span className="hidden sm:flex items-center gap-2 border border-steelline rounded-sm px-3 py-2">
             <span className="h-2 w-2 rounded-full bg-jade animate-pulse" />
-            <span className="font-mono text-[10px] tracking-[0.18em] uppercase text-[#7f93a6]">
+            <span className="font-mono text-[10px] text-[#7f93a6]" dir="ltr">
               admin@smokecity
             </span>
           </span>
@@ -238,7 +242,7 @@ function AdminShell() {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Overview                                                           */
+/*  پیشخوان                                                               */
 /* ------------------------------------------------------------------ */
 
 export function Overview() {
@@ -262,7 +266,7 @@ export function Overview() {
         .filter((o) => o.status !== "cancelled" && new Date(o.date).toDateString() === key)
         .reduce((s, o) => s + o.total, 0);
       days.push({
-        label: d.toLocaleDateString("en-US", { weekday: "short" }),
+        label: d.toLocaleDateString("fa-IR", { weekday: "short" }),
         total: Math.round(total),
       });
     }
@@ -272,15 +276,15 @@ export function Overview() {
   const recent = orders.slice(0, 5);
 
   const cards = [
-    { label: "Revenue", value: fmt(stats.revenue), hint: "excl. cancelled", warn: false },
-    { label: "Orders", value: String(stats.count), hint: "all time", warn: false },
-    { label: "Pending", value: String(stats.pending), hint: "awaiting dispatch", warn: false },
-    { label: "Low stock", value: String(stats.low.length), hint: "≤ 5 units", warn: stats.low.length > 0 },
+    { label: "درآمد کل", value: fmt(stats.revenue), hint: "به‌جز سفارش‌های لغوشده", warn: false },
+    { label: "سفارش‌ها", value: faNum(stats.count), hint: "از ابتدای کار", warn: false },
+    { label: "در انتظار", value: faNum(stats.pending), hint: "در صف ارسال", warn: false },
+    { label: "کم‌موجود", value: faNum(stats.low.length), hint: "۵ عدد یا کمتر", warn: stats.low.length > 0 },
   ];
 
   return (
     <div className="space-y-6">
-      {/* stat cards */}
+      {/* کارت‌های آمار */}
       <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-4">
         {cards.map((c, i) => (
           <div
@@ -288,32 +292,32 @@ export function Overview() {
             className="border border-steelline bg-steel2/80 rounded-sm p-5 hover:border-jade/40 transition-colors animate-rise"
             style={{ animationDelay: `${i * 70}ms` }}
           >
-            <p className="font-mono text-[10px] tracking-[0.24em] uppercase text-[#5c7183]">{c.label}</p>
-            <p className={`font-display text-4xl tracking-wide mt-2 ${c.warn ? "text-[#e8927c]" : "text-cream"}`}>
+            <p className="text-[11px] font-bold text-[#5c7183]">{c.label}</p>
+            <p className={`font-display text-4xl mt-2 leading-none ${c.warn ? "text-[#e8927c]" : "text-cream"}`}>
               {c.value}
             </p>
-            <p className="font-mono text-[10px] text-[#7f93a6] mt-1">{c.hint}</p>
+            <p className="text-[10px] text-[#7f93a6] mt-2 font-semibold">{c.hint}</p>
           </div>
         ))}
       </div>
 
       <div className="grid xl:grid-cols-[1.5fr_1fr] gap-6">
-        {/* chart */}
+        {/* نمودار فروش */}
         <div className="border border-steelline bg-steel2/80 rounded-sm p-6">
           <div className="flex items-center justify-between">
-            <h3 className="font-display text-xl tracking-wide">Sales — last 7 days</h3>
-            <span className="font-mono text-[10px] tracking-[0.18em] uppercase text-[#5c7183]">
-              excl. cancelled
+            <h3 className="font-display text-xl">فروش — ۷ روز اخیر</h3>
+            <span className="text-[10px] font-bold text-[#5c7183]">
+              به‌جز لغوشده‌ها
             </span>
           </div>
-          <div className="h-56 mt-4">
+          <div className="h-56 mt-4" dir="ltr">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData} margin={{ top: 4, right: 4, left: -14, bottom: 0 }}>
                 <XAxis
                   dataKey="label"
                   tickLine={false}
                   axisLine={{ stroke: "#26303a" }}
-                  tick={{ fill: "#7f93a6", fontSize: 10, fontFamily: "IBM Plex Mono" }}
+                  tick={{ fill: "#7f93a6", fontSize: 11, fontFamily: "Vazirmatn" }}
                 />
                 <Tooltip
                   cursor={{ fill: "rgba(156,196,173,0.06)" }}
@@ -321,11 +325,12 @@ export function Overview() {
                     background: "#161d24",
                     border: "1px solid #26303a",
                     borderRadius: "4px",
-                    fontFamily: "IBM Plex Mono",
+                    fontFamily: "Vazirmatn",
                     fontSize: "11px",
                     color: "#9cc4ad",
+                    direction: "rtl",
                   }}
-                  formatter={(v) => [fmt(Number(v)), "sales"]}
+                  formatter={(v) => [fmt(Number(v)), "فروش"]}
                 />
                 <Bar dataKey="total" fill="#9cc4ad" radius={[3, 3, 0, 0]} maxBarSize={38} />
               </BarChart>
@@ -333,16 +338,16 @@ export function Overview() {
           </div>
         </div>
 
-        {/* low stock */}
+        {/* هشدار موجودی */}
         <div className="border border-steelline bg-steel2/80 rounded-sm p-6">
           <div className="flex items-center justify-between">
-            <h3 className="font-display text-xl tracking-wide">Restock watch</h3>
-            <Link to="/admin/products" className="font-mono text-[10px] tracking-[0.18em] uppercase text-jade hover:underline">
-              Manage →
+            <h3 className="font-display text-xl">هشدار موجودی</h3>
+            <Link to="/admin/products" className="text-[11px] font-bold text-jade hover:underline">
+              مدیریت ←
             </Link>
           </div>
           {stats.low.length === 0 ? (
-            <p className="text-sm text-[#7f93a6] mt-4">All shelves healthy. Nothing under 5 units.</p>
+            <p className="text-sm text-[#7f93a6] mt-4 leading-relaxed">همهٔ قفسه‌ها سالم‌اند. هیچ قلمی زیر ۵ عدد نیست.</p>
           ) : (
             <ul className="mt-3 divide-y divide-steelline">
               {stats.low.map((p) => (
@@ -350,16 +355,16 @@ export function Overview() {
                   <img src={p.image} alt="" className="h-10 w-10 object-cover rounded-sm border border-steelline" />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-cream truncate">{p.name}</p>
-                    <p className="font-mono text-[10px] text-[#5c7183]">{p.sku}</p>
+                    <p className="font-mono text-[10px] text-[#5c7183]" dir="ltr">{p.sku}</p>
                   </div>
                   <span
-                    className={`font-mono text-xs px-2 py-1 rounded-sm border ${
+                    className={`text-xs font-bold px-2 py-1 rounded-sm border ${
                       p.stock === 0
                         ? "text-[#e8927c] border-[#e8927c]/40 bg-[#e8927c]/10"
                         : "text-ember border-ember/40 bg-ember/10"
                     }`}
                   >
-                    {p.stock === 0 ? "OUT" : `${p.stock} left`}
+                    {p.stock === 0 ? "تمام" : `${faNum(p.stock)} عدد`}
                   </span>
                 </li>
               ))}
@@ -368,36 +373,36 @@ export function Overview() {
         </div>
       </div>
 
-      {/* recent orders */}
+      {/* سفارش‌های اخیر */}
       <div className="border border-steelline bg-steel2/80 rounded-sm p-6">
         <div className="flex items-center justify-between">
-          <h3 className="font-display text-xl tracking-wide">Recent orders</h3>
-          <Link to="/admin/orders" className="font-mono text-[10px] tracking-[0.18em] uppercase text-jade hover:underline">
-            All orders →
+          <h3 className="font-display text-xl">سفارش‌های اخیر</h3>
+          <Link to="/admin/orders" className="text-[11px] font-bold text-jade hover:underline">
+            همهٔ سفارش‌ها ←
           </Link>
         </div>
         <div className="overflow-x-auto mt-4">
-          <table className="w-full text-left min-w-[640px]">
+          <table className="w-full text-start min-w-[640px]">
             <thead>
-              <tr className="font-mono text-[10px] tracking-[0.2em] uppercase text-[#5c7183] border-b border-steelline">
-                <th className="py-2.5 pr-4 font-medium">Order</th>
-                <th className="py-2.5 pr-4 font-medium">Customer</th>
-                <th className="py-2.5 pr-4 font-medium">Items</th>
-                <th className="py-2.5 pr-4 font-medium">Total</th>
-                <th className="py-2.5 pr-4 font-medium">When</th>
-                <th className="py-2.5 font-medium">Status</th>
+              <tr className="text-[11px] font-bold text-[#5c7183] border-b border-steelline">
+                <th className="py-2.5 pe-4 font-bold">سفارش</th>
+                <th className="py-2.5 pe-4 font-bold">مشتری</th>
+                <th className="py-2.5 pe-4 font-bold">اقلام</th>
+                <th className="py-2.5 pe-4 font-bold">مبلغ</th>
+                <th className="py-2.5 pe-4 font-bold">زمان</th>
+                <th className="py-2.5 font-bold">وضعیت</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-steelline">
               {recent.map((o) => (
                 <tr key={o.id} className="hover:bg-white/[0.03] transition-colors">
-                  <td className="py-3 pr-4 font-mono text-xs text-jade">{o.id}</td>
-                  <td className="py-3 pr-4 text-sm text-cream">{o.customer}</td>
-                  <td className="py-3 pr-4 font-mono text-xs text-[#7f93a6]">
-                    {o.items.reduce((s, i) => s + i.qty, 0)} units
+                  <td className="py-3 pe-4 font-mono text-xs text-jade" dir="ltr">{o.id}</td>
+                  <td className="py-3 pe-4 text-sm text-cream">{o.customer}</td>
+                  <td className="py-3 pe-4 text-xs text-[#7f93a6]">
+                    {faNum(o.items.reduce((s, i) => s + i.qty, 0))} عدد
                   </td>
-                  <td className="py-3 pr-4 font-mono text-xs text-cream">{fmt(o.total)}</td>
-                  <td className="py-3 pr-4 font-mono text-xs text-[#7f93a6]">{timeAgo(o.date)}</td>
+                  <td className="py-3 pe-4 text-xs font-bold text-cream">{fmt(o.total)}</td>
+                  <td className="py-3 pe-4 text-xs text-[#7f93a6]">{timeAgo(o.date)}</td>
                   <td className="py-3"><StatusPill status={o.status} /></td>
                 </tr>
               ))}

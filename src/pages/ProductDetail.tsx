@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { fmt } from "../data";
+import { faD, faNum, fmt } from "../data";
 import { useStore } from "../store";
 import { ProductCard } from "../chrome";
 import {
@@ -30,10 +30,10 @@ export default function ProductDetail() {
   if (!product) {
     return (
       <main className="relative z-10 max-w-3xl mx-auto px-5 py-28 text-center">
-        <h1 className="font-display text-6xl tracking-wide text-fog">LOST IN THE SMOKE</h1>
-        <p className="text-fog mt-3 text-sm">That lot isn't on the shelf anymore.</p>
+        <h1 className="font-display text-6xl text-fog leading-[1.05]">در دود گم شد</h1>
+        <p className="text-fog mt-3 text-sm">این قلم دیگر روی قفسه نیست.</p>
         <Link to="/shop" className="btn-ember mt-8">
-          Back to the shop <IconArrowRight size={14} />
+          بازگشت به فروشگاه <IconArrowLeft size={14} />
         </Link>
       </main>
     );
@@ -55,13 +55,13 @@ export default function ProductDetail() {
     <main className="relative z-10 max-w-7xl mx-auto px-5 md:px-8 pt-10">
       <Link
         to="/shop"
-        className="inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.2em] uppercase text-ash hover:text-ember transition-colors"
+        className="inline-flex items-center gap-2 text-xs font-semibold text-ash hover:text-ember transition-colors"
       >
-        <IconArrowLeft size={14} /> Back to shop
+        <IconArrowRight size={14} /> بازگشت به فروشگاه
       </Link>
 
       <div className="mt-8 grid lg:grid-cols-2 gap-12">
-        {/* image */}
+        {/* تصویر */}
         <Reveal>
           <div className="relative">
             <div className="absolute -inset-4 border border-line2/40 rounded-sm pointer-events-none" />
@@ -72,7 +72,7 @@ export default function ProductDetail() {
                 className={`w-full aspect-square object-cover ${soldOut ? "opacity-40 grayscale" : ""}`}
               />
               {product.badge && (
-                <span className="absolute top-4 left-4 bg-ember text-[#211507] font-mono text-[10px] font-bold tracking-[0.16em] uppercase px-2.5 py-1.5 rounded-sm">
+                <span className="absolute top-4 start-4 bg-ember text-[#211507] text-[10px] font-bold px-2.5 py-1.5 rounded-sm">
                   {product.badge}
                 </span>
               )}
@@ -80,26 +80,26 @@ export default function ProductDetail() {
           </div>
         </Reveal>
 
-        {/* info */}
+        {/* اطلاعات */}
         <div>
           <Reveal>
-            <p className="font-mono text-[11px] tracking-[0.3em] uppercase text-copper">
+            <p className="text-xs font-bold text-copper">
               {product.category} · {product.origin}
             </p>
-            <h1 className="font-display text-5xl md:text-6xl leading-[0.9] tracking-wide text-cream mt-3">
+            <h1 className="font-display text-5xl md:text-6xl leading-[1.05] text-cream mt-3">
               {product.name}
             </h1>
             <div className="flex items-center gap-3 mt-4">
               <Stars rating={product.rating} size={14} />
-              <span className="font-mono text-xs text-fog">
-                {product.rating.toFixed(1)} · {product.reviews} reviews
+              <span className="text-xs text-fog">
+                {faD(product.rating.toFixed(1))} · {faNum(product.reviews)} نظر
               </span>
             </div>
 
             <div className="flex items-baseline gap-3 mt-6">
-              <span className="font-display text-5xl text-ember">{fmt(product.price)}</span>
+              <span className="font-display text-5xl text-ember leading-none">{fmt(product.price)}</span>
               {product.oldPrice && (
-                <span className="font-mono text-base text-ash line-through">{fmt(product.oldPrice)}</span>
+                <span className="text-base text-ash line-through">{fmt(product.oldPrice)}</span>
               )}
             </div>
           </Reveal>
@@ -111,7 +111,7 @@ export default function ProductDetail() {
               {product.notes.map((n) => (
                 <span
                   key={n}
-                  className="border border-line2 rounded-sm px-3 py-1.5 font-mono text-[10px] tracking-[0.14em] uppercase text-parch bg-panel/60"
+                  className="border border-line2 rounded-sm px-3 py-1.5 text-[11px] font-semibold text-parch bg-panel/60"
                 >
                   {n}
                 </span>
@@ -129,45 +129,45 @@ export default function ProductDetail() {
               >
                 {added ? (
                   <>
-                    <IconCheck size={15} /> In the cart
+                    <IconCheck size={15} /> به سبد رفت
                   </>
                 ) : soldOut ? (
-                  "Sold out"
+                  "ناموجود"
                 ) : (
                   <>
-                    <IconCart size={15} /> Add to cart
+                    <IconCart size={15} /> افزودن به سبد
                   </>
                 )}
               </button>
               <button className="btn-ghost" disabled={soldOut} onClick={() => add(true)}>
-                Buy now
+                خرید فوری
               </button>
             </div>
 
             <p
-              className={`mt-4 font-mono text-[11px] tracking-[0.16em] uppercase ${
+              className={`mt-4 text-xs font-bold ${
                 soldOut ? "text-[#d98a7a]" : product.stock <= 5 ? "text-ember" : "text-jade"
               }`}
             >
               {soldOut
-                ? "Sold out — restocking soon"
+                ? "ناموجود — به‌زودی شارژ می‌شود"
                 : product.stock <= 5
-                ? `Only ${product.stock} left in the cellar`
-                : `In stock · ${product.stock} available`}
+                ? `فقط ${faNum(product.stock)} عدد در سردابه مانده`
+                : `موجود · ${faNum(product.stock)} عدد`}
             </p>
           </Reveal>
 
-          {/* meta */}
+          {/* مشخصات */}
           <Reveal delay={220}>
-            <dl className="mt-8 border border-line rounded-sm divide-y divide-line font-mono text-xs max-w-xl">
+            <dl className="mt-8 border border-line rounded-sm divide-y divide-line text-xs max-w-xl">
               {[
-                ["SKU", product.sku],
-                ["Origin", product.origin],
-                ["Category", product.category],
-                ["Stock", `${product.stock} units`],
-              ].map(([k, v]) => (
-                <div key={k} className="flex justify-between px-4 py-3">
-                  <dt className="tracking-[0.18em] uppercase text-ash">{k}</dt>
+                ["شناسه (SKU)", <span key="s" dir="ltr" className="font-mono">{product.sku}</span>],
+                ["خاستگاه", product.origin],
+                ["دسته‌بندی", product.category],
+                ["موجودی", `${faNum(product.stock)} عدد`],
+              ].map(([k, v], i) => (
+                <div key={i} className="flex justify-between px-4 py-3">
+                  <dt className="font-semibold text-ash">{k}</dt>
                   <dd className="text-parch">{v}</dd>
                 </div>
               ))}
@@ -178,26 +178,26 @@ export default function ProductDetail() {
                 <IconTruck size={17} />
               </span>
               <p className="leading-relaxed">
-                Ships in a cedar-lined box the same day if ordered before 16:00. Free shipping
-                over $150. Photo ID (21+) required at the door.
+                اگر قبل از ساعت ۱۶ سفارش بدهید، همان روز در جعبهٔ روکش‌سدر ارسال می‌شود. ارسال
+                رایگان برای خرید بالای ۱۵۰ دلار. هنگام تحویل، مدرک شناسایی (۱۸+) لازم است.
               </p>
             </div>
           </Reveal>
         </div>
       </div>
 
-      {/* related */}
+      {/* محصولات مرتبط */}
       {(related.length > 0 || fallback.length > 0) && (
         <section className="mt-24">
           <Reveal>
             <div className="flex items-end justify-between gap-6 flex-wrap">
               <div>
-                <p className="font-mono text-[11px] tracking-[0.28em] uppercase text-copper flex items-center gap-2">
+                <p className="text-xs font-bold text-copper flex items-center gap-2">
                   <span className="inline-block h-px w-8 bg-copper" />
-                  Pairs well with
+                  همراهش چه می‌چسبد
                 </p>
-                <h2 className="font-display text-4xl md:text-5xl tracking-wide mt-3 text-cream">
-                  More From The Cellar
+                <h2 className="font-display text-4xl md:text-5xl mt-3 text-cream leading-[1.05]">
+                  باز هم از سردابه
                 </h2>
               </div>
             </div>
