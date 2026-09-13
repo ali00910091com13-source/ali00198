@@ -101,15 +101,15 @@ export const timeAgo = (iso: string) => {
 };
 
 export const IMG = {
-  hero: "https://image.qwenlm.ai/generated-images/b321c60a-b66e-4d70-a3a4-f89b51381920/_result.png",
-  cigars: "https://image.qwenlm.ai/generated-images/468f6918-ae2e-428b-80bc-89a9740f9c3d/_result.png",
-  tobacco: "https://image.qwenlm.ai/generated-images/54d01a1f-b55c-462e-9710-5310ddbb5f3d/_result.png",
-  pipe: "https://image.qwenlm.ai/generated-images/f57a963e-b31c-4559-830a-10d10506c60b/_result.png",
-  lighter: "https://image.qwenlm.ai/generated-images/f6cd63db-f46f-4884-94ac-f8f15a3ea44d/_result.png",
-  hookah: "https://image.qwenlm.ai/generated-images/cce847e4-0e42-4647-8f48-57e245e5374e/_result.png",
-  rolling: "https://image.qwenlm.ai/generated-images/d14e092a-4303-45b1-9195-8bdce8511ac4/_result.png",
-  humidor: "https://image.qwenlm.ai/generated-images/21248cf0-4105-4654-88ad-50526d4089e7/_result.png",
-  cutter: "https://image.qwenlm.ai/generated-images/d80e5ca2-4bb9-4406-a9a3-95e452088d6f/_result.png",
+  hero: "https://image.qwenlm.ai/generated-images/533d6a89-9902-4692-82a6-512ce8c554ca/_result.png",
+  cigars: "https://image.qwenlm.ai/generated-images/981306c8-a37f-4101-83de-b30f29bcbc3f/_result.png",
+  tobacco: "https://image.qwenlm.ai/generated-images/af275891-fd3d-4fc7-b00b-f23b5357acaa/_result.png",
+  pipe: "https://image.qwenlm.ai/generated-images/670a119d-c82a-474d-af01-a6c882a87a5a/_result.png",
+  lighter: "https://image.qwenlm.ai/generated-images/31700992-b5ce-44a2-879e-dfeaefeeb4b8/_result.png",
+  hookah: "https://image.qwenlm.ai/generated-images/5c0e82b0-eb2f-46c2-b28b-76d68422e51c/_result.png",
+  rolling: "https://image.qwenlm.ai/generated-images/04130398-96f2-44b3-8741-a072e209ae2f/_result.png",
+  humidor: "https://image.qwenlm.ai/generated-images/c53328d2-3eb7-4b50-9827-b20d7cbb7f82/_result.png",
+  cutter: "https://image.qwenlm.ai/generated-images/0ecd2041-dc68-413f-9246-c189127c8b98/_result.png",
 };
 
 export const IMAGE_LIBRARY: { label: string; url: string }[] = [
