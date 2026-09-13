@@ -90,12 +90,18 @@ function save(key: string, value: unknown) {
 
 /* ------------------------------------------------------------------ */
 
+/* اگر دادهٔ ذخیره‌شده آرایهٔ سالم نبود، به دادهٔ اولیه برمی‌گردیم */
+function loadArray<T>(key: string, fallback: T[]): T[] {
+  const v = load<unknown>(key, fallback);
+  return Array.isArray(v) && v.length > 0 ? (v as T[]) : fallback;
+}
+
 export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [products, setProducts] = useState<Product[]>(() =>
-    load("sc_products_v1", SEED_PRODUCTS)
+    loadArray<Product>("sc_products_v2", SEED_PRODUCTS)
   );
-  const [orders, setOrders] = useState<Order[]>(() => load("sc_orders_v1", SEED_ORDERS));
-  const [cart, setCart] = useState<CartLine[]>(() => load("sc_cart_v1", []));
+  const [orders, setOrders] = useState<Order[]>(() => loadArray<Order>("sc_orders_v2", SEED_ORDERS));
+  const [cart, setCart] = useState<CartLine[]>(() => load<CartLine[]>("sc_cart_v2", []));
   const [cartOpen, setCartOpen] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [ageStatus, setAgeStatus] = useState<AgeStatus>(() =>
@@ -107,9 +113,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [orderBump, setOrderBump] = useState(0);
   const toastId = useRef(0);
 
-  useEffect(() => save("sc_products_v1", products), [products]);
-  useEffect(() => save("sc_orders_v1", orders), [orders]);
-  useEffect(() => save("sc_cart_v1", cart), [cart]);
+  useEffect(() => save("sc_products_v2", products), [products]);
+  useEffect(() => save("sc_orders_v2", orders), [orders]);
+  useEffect(() => save("sc_cart_v2", cart), [cart]);
 
   /* ---------------- toasts ---------------- */
 
